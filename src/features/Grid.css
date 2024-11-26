@@ -1,0 +1,27 @@
+.gridTableLayout {
+  padding: 5px;
+  width: 100%;
+  overflow-x: scroll;
+  
+  .gridRowLayout {
+    display: flex;
+    flex-wrap: nowrap;
+    height: 2rem;
+
+
+    >.gridCell {
+      border-right: 1px black solid;
+    }
+
+    >.gridCellLayout {
+      padding: 4px;
+      padding-right: 8px;
+      overflow: hidden;
+      white-space: nowrap;
+
+      &:not(:first-child) {
+        flex: 0 0 150px;
+      }
+    }
+  }
+}

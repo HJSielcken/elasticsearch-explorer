@@ -1,0 +1,22 @@
+{
+  "typeAcquisition": {
+    "enable": true
+  },
+  "include": [
+    "./src/**/*",
+    "./types/**/*",
+  ],
+  "compilerOptions": {
+    "allowJs": true,
+    "checkJs": true,
+    "resolveJsonModule": true,
+    "module": "Preserve",
+    "jsx": "react",
+    "baseUrl": ".",
+    "paths": {
+      "/*": [
+        "src/*"
+      ],
+    }
+  }
+}

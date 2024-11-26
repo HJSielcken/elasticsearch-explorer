@@ -1,0 +1,10 @@
+*.log
+config/local.js
+node_modules
+sketch
+target
+docker-compose.yml
+.kaliber-eval
+.tempCss
+browser-metafile.json
+server-metafile.json

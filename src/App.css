@@ -1,0 +1,25 @@
+body {
+  padding: 0;
+  margin: 0;
+}
+
+.headerLayout {
+  padding: 5px;
+  display: flex;
+  flex-direction: row;
+  justify-content: left;
+  height: 30px;
+  align-items: center;
+  gap: 40px;
+  background-color: black;
+  color: teal;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+dialog {
+  padding: 0px;
+  margin: auto;
+}

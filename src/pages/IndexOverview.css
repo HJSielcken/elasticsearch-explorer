@@ -1,0 +1,8 @@
+.indexGridCellLayout {
+  flex: 0 0 800px;
+}
+
+.gridHeader {
+  background-color: teal;
+  border-bottom: 2px solid black;
+}

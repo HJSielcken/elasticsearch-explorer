@@ -1,0 +1,9 @@
+.documentsGridCellLayout {
+  flex: 0 0 100px;
+}
+
+.gridHeader {
+  background-color: teal;
+  border-bottom: 2px solid black;
+  min-width: max-content;
+}

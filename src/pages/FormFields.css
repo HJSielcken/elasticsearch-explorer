@@ -1,0 +1,10 @@
+.multiSelectLayout {
+  max-height: 0px;
+  overflow-y: hidden;
+  transition: max-height 0.2s;
+
+  &.multiSelectIsOpen {
+    max-height: 1000px;
+  }
+  
+}
