@@ -8,7 +8,7 @@ export const apiUrls = {
 export async function apiCall(url, { method = 'GET', body = undefined } = {}) {
   return fetch(url, {
     method,
-    ...(body && { body: JSON.stringify(body) })
+    ...(body && { body: JSON.stringify(body) }),
     headers: {
       Accept: 'application/json',
       'Content-Type': 'application/json',

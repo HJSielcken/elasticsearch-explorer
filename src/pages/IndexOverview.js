@@ -1,7 +1,7 @@
 import { Link, useLocationMatch } from '@kaliber/routing'
 import { useQuery } from '@tanstack/react-query'
 import { routeMap } from '/routeMap'
-import { GridCell, GridRow, GridTable } from '/features/Grid'
+import { GridCell, GridCellWithPadding, GridRow, GridTable } from '/features/Grid'
 import { apiCall, apiUrls } from '/api'
 import { MappingModal } from '/features/Dialog'
 
@@ -32,12 +32,12 @@ export function IndexOverview() {
         {
           indices.map(({ index, ['docs.count']: count }) => (
             <GridRow key={index}>
-              <GridCell layoutClassName={styles.indexGridCellLayout}>
+              <GridCellWithPadding layoutClassName={styles.indexGridCellLayout}>
                 <Link to={routeMap.index.documents({ index })}>{index}</Link>
-              </GridCell>
-              <GridCell>{count}</GridCell>
+              </GridCellWithPadding>
+              <GridCellWithPadding>{count}</GridCellWithPadding>
               <GridCell>
-                <button onClick={() => {
+                <button className={styles.buttonLayout} onClick={() => {
                   setIndex(index)
                   modalRef.current.showModal()
                 }}>
@@ -57,5 +57,5 @@ export function IndexOverview() {
 }
 
 function HeaderGridCell({ children, layoutClassName = undefined }) {
-  return <GridCell className={styles.gridHeader} {...{ layoutClassName }}>{children}</GridCell>
+  return <GridCellWithPadding className={styles.gridHeader} {...{ layoutClassName }}>{children}</GridCellWithPadding>
 } 

@@ -23,3 +23,11 @@ export function  GridCell({ children, className = undefined, layoutClassName = u
     </div>
   )
 }
+
+export function  GridCellWithPadding({ children, className = undefined, layoutClassName = undefined, }) {
+  return (
+    <div className={cx(styles.gridCellLayout, styles.withPadding, styles.gridCell, layoutClassName, className)}>
+      {children}
+    </div>
+  )
+}

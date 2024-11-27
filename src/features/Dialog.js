@@ -23,11 +23,11 @@ export function MappingModal({ index, modalRef }) {
       </div>
     </dialog>
   )
+}
 
-  async function getMapping({ index }) {
-    const response = await apiCall(apiUrls.mapping({ index }))
-    return response[index].mappings
-  }
+async function getMapping({ index }) {
+  const response = await apiCall(apiUrls.mapping({ index }))
+  return response[index].mappings
 }
 
 export function DocumentModal({ index, documentId, modalRef }) {
@@ -41,13 +41,23 @@ export function DocumentModal({ index, documentId, modalRef }) {
     <dialog ref={modalRef}>
       <div className={styles.documentLayout}>
         <div className={cx(styles.indexLayout, styles.index)}>{index} - {documentId}</div>
-        <button onClick={() => { modalRef.current.close() }}>Close dialog</button>
-        <button onClick={() => { console.log(JSON.parse(contentRef.current.textContent)) }}>Update document</button>
+        <ButtonBox>
+          <button onClick={() => { modalRef.current.close() }}>Close dialog</button>
+          <button onClick={() => { console.log(JSON.parse(contentRef.current.textContent)) }}>Update document</button>
+        </ButtonBox>  
         <pre className={styles.formattedJSON} contentEditable suppressContentEditableWarning ref={contentRef}>
           {JSON.stringify(document, null, 2)}
         </pre>
       </div>
     </dialog>
+  )
+}
+
+function ButtonBox({ children }) {
+  return (
+    <div className={styles.buttonBoxLayout}>
+      {children}
+    </div>
   )
 }
 

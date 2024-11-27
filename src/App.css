@@ -18,8 +18,3 @@ body {
 a:hover {
   text-decoration: underline;
 }
-
-dialog {
-  padding: 0px;
-  margin: auto;
-}

@@ -5,7 +5,7 @@ import { useLocationMatch } from '@kaliber/routing'
 import { useQuery } from '@tanstack/react-query'
 import { apiCall, apiUrls } from '/api'
 
-import { GridCell, GridRow, GridTable } from '/features/Grid'
+import { GridCell, GridCellWithPadding, GridRow, GridTable } from '/features/Grid'
 import { MultiSelect } from './FormFields'
 import { DocumentModal } from '/features/Dialog'
 import { FormFieldValue } from '@kaliber/forms/components'
@@ -45,13 +45,15 @@ export function DocumentOverview() {
         return (
           <GridTable>
             <GridRow>
-              <HeaderGridCell layoutClassName={styles.documentsGridCellLayout}>_id</HeaderGridCell>
+              <HeaderGridCell layoutClassName={styles.firstGridCellLayout}>_id</HeaderGridCell>
               {columns.map(key => <HeaderGridCell key={key}>{key}</HeaderGridCell>)}
             </GridRow>
             {documents.map(document => (
-              <GridRow key={document._id} >
-                <GridCell layoutClassName={styles.documentsGridCellLayout}><button onClick={() => { setDocumentId(document._id); modalRef.current.showModal() }}>{document._id}</button></GridCell>
-                {columns.map(key => <GridCell key={key}>{['string', 'number'].includes(typeof document[key]) ? document[key] : JSON.stringify(document[key])}</GridCell>)}
+              <GridRow key={document._id} > 
+                <GridCell layoutClassName={styles.firstGridCellLayout}>
+                  <button className={styles.buttonLayout} onClick={() => { setDocumentId(document._id); modalRef.current.showModal() }}>{document._id}</button>
+                </GridCell>
+                {columns.map(key => <DocumentGridCell key={key}>{['string', 'number'].includes(typeof document[key]) ? document[key] : JSON.stringify(document[key])}</DocumentGridCell>)}
               </GridRow>
             )
             )}
@@ -63,10 +65,15 @@ export function DocumentOverview() {
   )
 }
 
-function HeaderGridCell({ children, layoutClassName = undefined }) {
-  return <GridCell className={styles.gridHeader} {...{ layoutClassName }}>{children}</GridCell>
+function HeaderGridCell({ children, layoutClassName = styles.cellLayout }) {
+  return <GridCellWithPadding className={styles.gridHeader} {...{ layoutClassName }}><p style={{verticalAlign: 'center'}}>{children}</p></GridCellWithPadding>
 } 
 
+function DocumentGridCell({children}) {
+  return (
+    <GridCellWithPadding layoutClassName={styles.cellLayout}>{ children }</GridCellWithPadding>
+  )
+}
 
 async function getDocuments({ index }) {
   const response = await apiCall(apiUrls.search({ index }), {
