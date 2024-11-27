@@ -10,7 +10,9 @@ export function MappingModal({ index, modalRef }) {
     <dialog ref={modalRef}>
       <div className={styles.mappingLayout}>
         <div className={cx(styles.indexLayout, styles.index)}>{index}</div>
-        <button onClick={() => { modalRef.current.close() }}>Close dialog</button>
+        <ButtonBox>
+          <button onClick={() => { modalRef.current.close() }}>Close dialog</button>
+        </ButtonBox>
         <code>
           <pre>
             {JSON.stringify(mapping, null, 2)}
@@ -20,8 +22,6 @@ export function MappingModal({ index, modalRef }) {
     </dialog>
   )
 }
-
-
 
 export function DocumentModal({ index, documentId, modalRef }) {
   const contentRef = React.useRef(null)

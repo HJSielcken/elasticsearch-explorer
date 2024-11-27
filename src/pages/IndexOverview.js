@@ -37,7 +37,7 @@ export function IndexOverview() {
               </GridCellWithPadding>
               <GridCellWithPadding>{count}</GridCellWithPadding>
               <GridCell>
-                <button className={styles.buttonLayout} onClick={() => {
+                <button className={cx(styles.buttonLayout, styles.gridButton)} onClick={() => {
                   setIndex(index)
                   modalRef.current.showModal()
                 }}>

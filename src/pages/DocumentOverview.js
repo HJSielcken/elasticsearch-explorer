@@ -57,7 +57,7 @@ export function DocumentOverview() {
               <GridRow key={document._id} >
                 <GridCell layoutClassName={styles.firstGridCellLayout}>
                   <button
-                    className={styles.buttonLayout}
+                    className={cx(styles.buttonLayout, styles.gridButton)}
                     onClick={() => handleDocumentClick(document)}
                   >{document._id}</button>
                 </GridCell>
@@ -102,6 +102,7 @@ function FilterForm({ index, onFilterChange }) {
 
       const query = and(matchAll(), or(...orFilters), not(...notFilters), and(...andFilters))
 
+      console.log(JSON.stringify(query, null, 2))
       onFilterChange(query)
     }
   })
@@ -121,13 +122,18 @@ function FilterForm({ index, onFilterChange }) {
 }
 
 function toFilter({ _type, fieldname, ...rest }) {
+  console.log({ _type, rest })
   if (_type === 'keyword') return terms(fieldname, ensureArray(rest.keyword))
-  if (_type === 'text') return search(fieldname, ensureArray(rest.text))
+  if (_type === 'text') return search([fieldname], ensureText(rest.text))
   return null
 }
 
 function ensureArray(value) {
   return [].concat(value).filter(Boolean)
+}
+
+function ensureText(value) {
+  return String(value)
 }
 
 function FilterField({ field, fields, title }) {
@@ -163,6 +169,7 @@ function TextFilterField({ field, textFields, helpers }) {
   return (
     <div className={styles.filterFieldLayout}>
       <select name={`${name}_fieldname`} onChange={handleFieldnameChange} >
+        <option>Select field</option>
         {textFields.map(x => <option key={x} defaultValue={fieldname.state.value}>{x}</option>)}
       </select>
       <input name={`${name}_text`} type='text' defaultValue={text.state.value} onChange={handleTextChange} />

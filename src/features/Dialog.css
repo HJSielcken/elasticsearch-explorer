@@ -23,10 +23,10 @@
 }
 
 .buttonBoxLayout {
-  padding: 4px;
+  padding: 2px;
   display: flex;
   flex-direction: row;
-  gap: 10px;
+  gap: 2px;
   align-items: center;
   justify-content: left;
 }
