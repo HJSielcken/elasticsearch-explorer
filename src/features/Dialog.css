@@ -3,12 +3,14 @@
   padding-top: 0px;
   display: flex;
   flex-direction: column;
+  justify-content: center;
   width: 50vw;
-
+  
   >.indexLayout {
     padding: 6px;
+    text-align: center;
   }
-
+  
   >.index {
     background-color: aqua;
   }
@@ -27,9 +29,4 @@
   gap: 10px;
   align-items: center;
   justify-content: left;
-}
-
-dialog {
-  margin: auto;
-  padding: 0px;
 }

@@ -4,11 +4,7 @@ import { apiCall, apiUrls } from '/api'
 import styles from './Dialog.css'
 
 export function MappingModal({ index, modalRef }) {
-  const { data: mapping } = useQuery({
-    queryKey: ['mapping', index],
-    queryFn: () => getMapping({ index }),
-    initialData: {}
-  })
+  const { mapping } = useMapping({ index })
 
   return (
     <dialog ref={modalRef}>
@@ -25,10 +21,7 @@ export function MappingModal({ index, modalRef }) {
   )
 }
 
-async function getMapping({ index }) {
-  const response = await apiCall(apiUrls.mapping({ index }))
-  return response[index].mappings
-}
+
 
 export function DocumentModal({ index, documentId, modalRef }) {
   const contentRef = React.useRef(null)
@@ -40,11 +33,13 @@ export function DocumentModal({ index, documentId, modalRef }) {
   return (
     <dialog ref={modalRef}>
       <div className={styles.documentLayout}>
-        <div className={cx(styles.indexLayout, styles.index)}>{index} - {documentId}</div>
+        <div className={cx(styles.indexLayout, styles.index)}>
+          {index} - {documentId}
+        </div>
         <ButtonBox>
           <button onClick={() => { modalRef.current.close() }}>Close dialog</button>
           <button onClick={() => { console.log(JSON.parse(contentRef.current.textContent)) }}>Update document</button>
-        </ButtonBox>  
+        </ButtonBox>
         <pre className={styles.formattedJSON} contentEditable suppressContentEditableWarning ref={contentRef}>
           {JSON.stringify(document, null, 2)}
         </pre>
@@ -66,4 +61,20 @@ async function getDocument({ index, documentId }) {
   const { _source } = await apiCall(apiUrls.document({ index, id: documentId }))
 
   return _source
+}
+
+export function useMapping({ index }) {
+  const { data: mapping } = useQuery({
+    queryKey: ['mapping', index],
+    queryFn: () => getMapping({ index }),
+    initialData: {}
+  })
+
+  return { mapping }
+}
+
+
+async function getMapping({ index }) {
+  const response = await apiCall(apiUrls.mapping({ index }))
+  return response[index].mappings
 }

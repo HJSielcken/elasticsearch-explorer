@@ -1,5 +1,6 @@
 .gridTableLayout {
-  padding: 5px;
+  padding-top: 0px;
+  padding-left: 2px;
   width: 100%;
   overflow-x: scroll;
   
@@ -12,6 +13,8 @@
     >.gridCell {
       border-right: 1px black solid;
       overflow: hidden;
+      display: flex;
+      align-items: center;
     }
 
     >.gridCellLayout {

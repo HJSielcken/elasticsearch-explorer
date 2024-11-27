@@ -48,26 +48,3 @@ function SiteHeader() {
     </div>
   )
 }
-
-
-
-
-
-
-
-
-
-function extractFieldsWithType(mapping, type, path = []) {
-  return Object.entries(mapping).reduce(
-    (result, [k, v]) => {
-      if (typeof v === 'object')
-        return [...extractFieldsWithType(v, type, [...path, k]), ...result]
-
-      if (v === type)
-        return [path.filter(x => x !== 'properties').join('.'), ...result]
-
-      return result
-    },
-    []
-  )
-}

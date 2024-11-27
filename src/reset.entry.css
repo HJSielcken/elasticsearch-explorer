@@ -83,3 +83,8 @@ img,
 video {
   height: auto;
 }
+
+dialog {
+  margin: auto;
+  padding: 0px;
+}

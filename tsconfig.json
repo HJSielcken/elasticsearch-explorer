@@ -5,6 +5,7 @@
   "include": [
     "./src/**/*",
     "./types/**/*",
+    "./node_modules/@kaliber/**/*"
   ],
   "compilerOptions": {
     "allowJs": true,

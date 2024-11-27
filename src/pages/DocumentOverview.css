@@ -12,7 +12,53 @@
   width: 100%;
 }
 
+.columnSelectWrapperLayout {
+  padding: 2px;
+  width: 200px;
+}
+
+.searchButtonWrapper {
+  padding: 2px;
+  width: 90px;
+}
+
 .cellLayout {
   display: flex;
   align-items: center;
+}
+
+.filterFieldLayout {
+  display: grid;
+  grid-template-columns: 150px 200px 40px;
+  padding-left: 100px;
+}
+
+.filterFormLayout {
+  padding-top: 2px;
+  width: 600px;
+}
+
+.filterHeaderLayout {
+  display: flex;
+  gap: 2px;
+  
+
+  &>* {
+    padding-right: 10px;
+    padding-left: 10px;
+    &:first-child {
+      min-width: 90px;
+    }
+  }
+
+  &>span {
+    padding-left: 4px;
+    text-align: left;
+  }
+
+}
+
+.filterFieldsLayout {
+  /* padding-top: 2px; */
+  padding-bottom: 2px;
 }
