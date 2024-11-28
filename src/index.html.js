@@ -11,7 +11,7 @@ export default (
       {stylesheet}
       {javascript}
       <title>
-        Aaps
+        ElasticSearch
       </title>
     </head>
 

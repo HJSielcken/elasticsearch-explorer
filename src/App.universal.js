@@ -1,6 +1,6 @@
-import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { routeMap } from './routeMap'
-import { LocationProvider, useLocationMatch, useRouting } from '@kaliber/routing'
+import { LocationProvider, useRouting } from '@kaliber/routing'
 import { useRenderOnMount } from '@kaliber/use-render-on-mount'
 import { Link } from '@kaliber/routing'
 
@@ -30,14 +30,16 @@ export default function App() {
 function Site() {
   const { matchRoutes } = useRouting()
 
-  return (<div>
-    <SiteHeader />
-    {matchRoutes(
-      [routeMap.home, <b>Home</b>],
-      [routeMap.index.overview, <IndexOverview />],
-      [routeMap.index.documents, <DocumentOverview />],
-    )}
-  </div>)
+  return (
+    <div>
+      <SiteHeader />
+      {matchRoutes(
+        [routeMap.home, <b>Home</b>],
+        [routeMap.index.overview, <IndexOverview />],
+        [routeMap.index.documents, <DocumentOverview />],
+      )}
+    </div>
+  )
 }
 
 function SiteHeader() {

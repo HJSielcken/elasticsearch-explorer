@@ -1,21 +1,25 @@
-import {  useFormField } from '@kaliber/forms'
+import { useFormField } from '@kaliber/forms'
 
 import styles from './FormFields.css'
 
-export function MultiSelect({ options, field }) {
+export function MultiSelect({ field, options = [], initialValue}) {
   const [isOpen, setIsOpen] = React.useState(false)
   const { name, state, eventHandlers: { onChange } } = useFormField(field)
-  const { value = options } = state
+  const { value = initialValue } = state
 
   return (
-    <div>
-      <button onClick={() => setIsOpen(x => !x)}>Select columns</button>
-      <ul className={cx(isOpen && styles.multiSelectIsOpen, styles.multiSelectLayout)}>
-        <li><button onClick={() => value.length === options.length ? onChange([]) : onChange(options)}>(De)select all</button></li>
-        {options.map(x => (<li key={x}>
-          <input type='checkbox' {...{ name }} onChange={() => handleChange(x)} checked={value.includes(x)} id={x} />
-          <label htmlFor={x}>{x}</label>
-        </li>)
+    <div className={styles.multiSelectLayout}>
+      <button onClick={() => setIsOpen(x => !x)}>Select columns ↓</button>
+      <ul className={cx(isOpen && styles.multiSelectIsOpen, styles.multiSelectIsOpenLayout)}>
+        <li>
+          <button className={styles.selectAllButton} onClick={handleSelectAll}>(De)select all</button>
+        </li>
+        {options.map(x => (
+          <li key={x} className={cx(value.includes(x) && styles.checked)}>
+            <input type='checkbox' {...{ name }} onChange={() => handleChange(x)} checked={value.includes(x)} id={x} />
+            <div className={cx(styles.multiSelectCheckbox,)}>{value.includes(x) && 'x'}</div>
+            <label htmlFor={x}>{x}</label>
+          </li>)
         )}
       </ul>
     </div>
@@ -24,5 +28,9 @@ export function MultiSelect({ options, field }) {
   function handleChange(optionValue) {
     if (value.includes(optionValue)) onChange(value.filter(x => x !== optionValue))
     else onChange([...value, optionValue])
+  }
+
+  function handleSelectAll() {
+    value.length === options.length ? onChange([]) : onChange(options)
   }
 }

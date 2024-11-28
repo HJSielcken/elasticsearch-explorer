@@ -29,9 +29,6 @@
         flex: 0 0 150px;
       }
 
-      &:last-child {
-        border-bottom: 1px black solid;
-      }
     }
   }
 }

@@ -27,12 +27,24 @@ button.gridButton {
   width: 200px;
 }
 
-.searchButtonWrapper {
+.buttonsLayout {
+  display: flex;
+  flex-direction: row;
+  gap: 2px;
+  padding-top: 0px;
+}
+
+.buttonRowLayout {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  width: 100vw;
+  flex-direction: row;
+  gap: 2px;
   padding-left: 2px;
   padding-right: 2px;
   padding-bottom: 2px;
   padding-top: 0px;
-  width: 90px;
 }
 
 .cellLayout {
@@ -50,7 +62,7 @@ button.gridButton {
 .filterFormLayout {
   padding-top: 2px;
   padding-bottom: 0px;
-  width: 600px;
+  width: 1000px;
 }
 
 .filterHeaderLayout {

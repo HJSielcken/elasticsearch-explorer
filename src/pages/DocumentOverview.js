@@ -2,7 +2,7 @@ import { array, snapshot, useArrayFormField, useForm, useFormField, useObjectFor
 import { matchAll, filter, and, or, not, search, terms } from '@kaliber/elasticsearch/query'
 import { optional, required } from '@kaliber/forms/validation'
 import { useLocationMatch } from '@kaliber/routing'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { apiCall, apiUrls } from '/api'
 
 import { GridCell, GridCellWithPadding, GridRow, GridTable } from '/features/Grid'
@@ -14,22 +14,23 @@ import { FormFieldValue } from '@kaliber/forms/components'
 import styles from './DocumentOverview.css'
 
 export function DocumentOverview() {
+
   const [query, setQuery] = React.useState(matchAll())
-  const { route, params } = useLocationMatch()
+  const { params } = useLocationMatch()
   const { index } = params
+  const fields = useFilterFields({ index })
   const modalRef = React.useRef(null)
   const [documentId, setDocumentId] = React.useState(null)
-  const { form: { fields } } = useForm({
+
+  const { form } = useForm({
     fields: {
       columnsToShow: optional
     },
-    onSubmit: console.log
+    onSubmit: () => { }
   })
 
   const { data } = useQuery({
-    queryKey: ['documents', route(params), JSON.stringify(query)],
-    retry: false,
-    retryOnMount: false,
+    queryKey: [index, 'documents', JSON.stringify(query)],
     queryFn: () => getDocuments({ index, query }),
     initialData: { documents: [], total: 0 }
   })
@@ -41,11 +42,8 @@ export function DocumentOverview() {
   return (
     <div>
       <DocumentModal {...{ index, documentId, modalRef }} />
-      <FilterForm {...{ index }} onFilterChange={handleFilterChange} />
-      <div className={styles.columnSelectWrapperLayout}>
-        <MultiSelect field={fields.columnsToShow} options={keys} />
-      </div>
-      <FormFieldValue field={fields.columnsToShow} render={(value = keys) => {
+      <FilterForm {...{ index }} onFilterChange={handleFilterChange} columnToShowField={form.fields.columnsToShow} columns={keys} {...{ fields }} />
+      <FormFieldValue field={form.fields.columnsToShow} render={(value = keys) => {
         const columns = keys.filter(x => value.includes(x))
         return (
           <GridTable>
@@ -82,9 +80,9 @@ export function DocumentOverview() {
   }
 }
 
-function FilterForm({ index, onFilterChange }) {
-  const fields = useFilterFields({ index })
-  const { form, submit } = useForm({
+function FilterForm({ columnToShowField, index, columns, onFilterChange, fields }) {
+  const queryClient = useQueryClient()
+  const { form, submit, reset } = useForm({
     fields: {
       and: array(filterField()),
       or: array(filterField()),
@@ -102,29 +100,45 @@ function FilterForm({ index, onFilterChange }) {
 
       const query = and(matchAll(), or(...orFilters), not(...notFilters), and(...andFilters))
 
-      console.log(JSON.stringify(query, null, 2))
       onFilterChange(query)
     }
   })
-
-
 
   return (
     <div className={styles.filterFormLayout}>
       <FilterField field={form.fields.and} title='AND' {...{ fields }} />
       <FilterField field={form.fields.or} title='OR' {...{ fields }} />
       <FilterField field={form.fields.not} title='NOT' {...{ fields }} />
-      <div className={styles.searchButtonWrapper}>
-        <button className={styles.buttonLayout} onClick={submit}>Submit</button>
+      <div className={styles.buttonRowLayout}>
+        <div className={styles.buttonsLayout}>
+          <button className={styles.buttonLayout} onClick={submit}>Search</button>
+          <button className={styles.buttonLayout} onClick={handleReset}>Reset</button>
+          <button className={styles.buttonLayout} onClick={handleRefresh}>Refresh</button>
+        </div>
+        <MultiSelect field={columnToShowField} options={columns} initialValue={columns} />
       </div>
     </div>
   )
+
+  function handleReset() {
+    reset()
+    submit()
+  }
+
+  function handleRefresh() {
+    queryClient.invalidateQueries({
+      queryKey: [index],
+      type: 'all',
+      refetchType: 'active'
+    })
+  }
 }
 
 function toFilter({ _type, fieldname, ...rest }) {
-  console.log({ _type, rest })
-  if (_type === 'keyword') return terms(fieldname, ensureArray(rest.keyword))
-  if (_type === 'text') return search([fieldname], ensureText(rest.text))
+  const keyword = ensureArray(rest.keyword)
+  const text = ensureText(rest.text)
+  if (_type === 'keyword') return keyword.length && terms(fieldname, keyword)
+  if (_type === 'text') return text && search([fieldname], ensureText(text))
   return null
 }
 
@@ -138,7 +152,7 @@ function ensureText(value) {
 
 function FilterField({ field, fields, title }) {
   const { state: { children }, helpers } = useArrayFormField(field)
-  const { keyword, text } = fields
+  const { keyword, text, optionsPerKeyword } = fields
 
   return (
     <div>
@@ -151,7 +165,7 @@ function FilterField({ field, fields, title }) {
         {children.map(field => {
           const { _type } = field.value.get()
 
-          return (_type === 'keyword' ? <KeywordFilterField key={field.name} keywordFields={keyword} {...{ field, helpers }} />
+          return (_type === 'keyword' ? <KeywordFilterField key={field.name} keywordFields={keyword} {...{ field, helpers, optionsPerKeyword }} />
             : _type === 'text' ? <TextFilterField key={field.name} textFields={text} {...{ field, helpers }} />
               : null
           )
@@ -192,17 +206,21 @@ function TextFilterField({ field, textFields, helpers }) {
   }
 }
 
-function KeywordFilterField({ field, keywordFields, helpers }) {
-  const { name, fields } = useObjectFormField(field)
-  const { keyword, fieldname } = fields
+function KeywordFilterField({ field, keywordFields, helpers, optionsPerKeyword }) {
+  const keyword = useFormField(field.fields.keyword)
+  const fieldname = useFormField(field.fields.fieldname)
 
   return (
     <div className={styles.filterFieldLayout}>
-      <select name={`${name}_fieldname`} onChange={handleFieldnameChange} >
+      <select name={`${fieldname.name}_fieldname`} onChange={handleFieldnameChange} >
         <option>Select field</option>
         {keywordFields.map(x => <option key={x} defaultValue={fieldname.state.value}>{x}</option>)}
       </select>
-      <input name={`${name}_keyword`} type='text' defaultValue={keyword.state.value} onChange={handleTextChange} />
+      {/* <select name={`${fieldname.name}_keyword`} onChange={handleTextChange} >
+        <option>Select value</option>
+        {optionsPerKeyword[fieldname.state.value]?.map(x => <option key={x} value={x}>{x}</option>)}
+      </select> */}
+      <MultiSelect options={optionsPerKeyword[fieldname.state.value]} field={field.fields.keyword} initialValue={[]}/>
       <button onClick={handleDelete}> - </button>
     </div>
   )
@@ -210,10 +228,12 @@ function KeywordFilterField({ field, keywordFields, helpers }) {
   function handleFieldnameChange(e) {
     const fieldnameValue = e.target.value
     fieldname.eventHandlers.onChange(fieldnameValue)
+    keyword.eventHandlers.onChange('')
   }
 
   function handleTextChange(e) {
     const keywordValue = e.target.value
+    console.log({ keywordValue })
     keyword.eventHandlers.onChange(keywordValue)
   }
 
@@ -236,8 +256,32 @@ function useFilterFields({ index }) {
   const keyword = React.useMemo(() => extractFieldsWithType(mapping, 'keyword'), [mapping])
   const text = React.useMemo(() => extractFieldsWithType(mapping, 'text'), [mapping])
 
-  return { keyword, text }
+  const { data: optionsPerKeyword } = useQuery({
+    queryKey: [index, 'aggregations', keyword],
+    queryFn: () => getAggregations({ keyword, index })
+  })
+
+  console.log(optionsPerKeyword)
+
+  return { keyword, text, optionsPerKeyword }
 }
+
+
+async function getAggregations({ keyword, index }) {
+  const aggs = Object.fromEntries(keyword.map(x => [x, terms(x)]))
+  const body = { aggs, size: 0 }
+
+  const response = await apiCall(apiUrls.search({ index }), { method: 'POST', body })
+  return Object.fromEntries(
+    Object.entries(response.aggregations).map(([k, v]) => [k, v.buckets.map(x => x.key)])
+  )
+
+  function terms(x) {
+    return { terms: { field: x } }
+  }
+}
+
+
 
 function extractFieldsWithType(mapping, type, path = []) {
   return Object.entries(mapping).reduce(

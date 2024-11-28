@@ -1,4 +1,4 @@
-import { Link, useLocationMatch } from '@kaliber/routing'
+import { Link } from '@kaliber/routing'
 import { useQuery } from '@tanstack/react-query'
 import { routeMap } from '/routeMap'
 import { GridCell, GridCellWithPadding, GridRow, GridTable } from '/features/Grid'
@@ -8,14 +8,11 @@ import { MappingModal } from '/features/Dialog'
 import styles from './IndexOverview.css'
 
 export function IndexOverview() {
-  const { route, params } = useLocationMatch()
   const modalRef = React.useRef(null)
   const [index, setIndex] = React.useState(null)
 
   const { data: indices } = useQuery({
-    queryKey: ['indices', route(params)],
-    retry: false,
-    retryOnMount: false,
+    queryKey: ['indices'],
     queryFn: () => getIndices(),
     initialData: []
   })
@@ -57,5 +54,9 @@ export function IndexOverview() {
 }
 
 function HeaderGridCell({ children, layoutClassName = undefined }) {
-  return <GridCellWithPadding className={styles.gridHeader} {...{ layoutClassName }}>{children}</GridCellWithPadding>
+  return (
+    <GridCellWithPadding className={styles.gridHeader} {...{ layoutClassName }}>
+      {children}
+    </GridCellWithPadding>
+  )
 } 

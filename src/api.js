@@ -2,7 +2,10 @@ export const apiUrls = {
   mapping: ({ index }) => `http://localhost:9200/${index}`,
   indices: () => 'http://localhost:9200/_cat/indices',
   search: ({ index }) => `http://localhost:9200/${index}/_search`,
-  document: ({ index, id }) => `http://localhost:9200/${index}/_doc/${id}`
+  document: ({ index, id }) => `http://localhost:9200/${index}/_doc/${id}`,
+  update: ({ index, id }) => `http://localhost:9200/${index}/_update/${id}`,
+  delete: ({ index, id }) => `http://localhost:9200/${index}/_doc/${id}`,
+  create: ({ index, id }) => `http://localhost:9200/${index}/_doc/${id}`,
 }
 
 export async function apiCall(url, { method = 'GET', body = undefined } = {}) {
