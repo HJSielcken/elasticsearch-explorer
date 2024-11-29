@@ -49,7 +49,6 @@ export function IndexOverview() {
   )
 
   async function getIndices() {
-    sendMessage()
     return apiCall(apiUrls.indices())
   }
 }

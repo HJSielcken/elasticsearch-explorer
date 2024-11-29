@@ -1,6 +1,3 @@
-declare const React: typeof import('react')
-declare const cx: typeof import('classnames')
-
 interface Window {
   dataLayer: Array<Object>
 }
@@ -14,10 +11,16 @@ declare module '*.woff2'
 declare module '*.jpg'
 declare module '*.jpeg'
 declare module '*.png'
+declare module '*?universal'
 
-declare module '*.raw.svg' {
-  const x: string
-  export default x
+declare module '@kaliber/esbuild/javascript' {
+  const javascript
+  export { javascript }
+}
+
+declare module '@kaliber/esbuild/stylesheet' {
+  const stylesheet
+  export { stylesheet }
 }
 
 interface Navigator {
