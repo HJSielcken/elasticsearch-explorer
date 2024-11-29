@@ -1,26 +1,12 @@
-.documentLayout,
-.mappingLayout {
-  padding-top: 0px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  width: 50vw;
-  
-  >.indexLayout {
-    padding: 6px;
-    text-align: center;
-  }
-  
-  >.index {
-    background-color: aqua;
-  }
+.componentDialogHeadingLayout {
+  padding: 6px;
+  text-align: center;
 }
 
-.formattedJSON {
-  padding: 4px;
-  white-space: pre-wrap;
-  word-wrap: break-word;
+.componentDialogHeading {
+  background-color: aqua;
 }
+
 
 .buttonBoxLayout {
   padding: 2px;
@@ -29,4 +15,24 @@
   gap: 2px;
   align-items: center;
   justify-content: left;
+}
+
+.componentLayout {
+  margin: auto;
+  padding: 0px;
+
+  &>.containerLayout {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 50vw;
+    
+  }
+}
+
+
+.componentFormattedJSONLayout {
+  padding: 4px;
+  white-space: pre-wrap;
+  word-wrap: break-word;
 }

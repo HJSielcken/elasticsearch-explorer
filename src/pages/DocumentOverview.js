@@ -5,7 +5,7 @@ import { useLocationMatch } from '@kaliber/routing'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { apiCall, apiUrls } from '/api'
 
-import { GridCell, GridCellWithPadding, GridRow, GridTable } from '/features/Grid'
+import { GridCell, GridCellWithLeftPadding, GridRow, GridTable } from '/features/Grid'
 import { MultiSelect } from './FormFields'
 import { DocumentModal, useMapping } from '/features/Dialog'
 import { FormFieldValue } from '@kaliber/forms/components'
@@ -59,7 +59,7 @@ export function DocumentOverview() {
                     onClick={() => handleDocumentClick(document)}
                   >{document._id}</button>
                 </GridCell>
-                {columns.map(key => <GridCellWithPadding key={key}>{normalizeJson(document[key])}</GridCellWithPadding>)}
+                {columns.map(key => <GridCellWithLeftPadding key={key}>{normalizeJson(document[key])}</GridCellWithLeftPadding>)}
               </GridRow>
             )
             )}
@@ -301,7 +301,7 @@ function extractFieldsWithType(mapping, type, path = []) {
 
 
 function HeaderGridCell({ children, layoutClassName = styles.cellLayout }) {
-  return <GridCellWithPadding className={styles.gridHeader} {...{ layoutClassName }}>{children}</GridCellWithPadding>
+  return <GridCellWithLeftPadding className={styles.gridHeader} {...{ layoutClassName }}>{children}</GridCellWithLeftPadding>
 }
 
 async function getDocuments({ index, query }) {

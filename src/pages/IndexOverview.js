@@ -1,9 +1,10 @@
 import { Link } from '@kaliber/routing'
 import { useQuery } from '@tanstack/react-query'
 import { routeMap } from '/routeMap'
-import { GridCell, GridCellWithPadding, GridRow, GridTable } from '/features/Grid'
-import { apiCall, apiUrls, sendMessage } from '/api'
-import { MappingModal } from '/features/Dialog'
+import { GridCell, GridCellWithLeftPadding, GridRow, GridTable } from '/features/Grid'
+import { apiCall, apiUrls } from '/api'
+import { DialogModal } from '/features/Dialog'
+import { Button } from '/features/Button'
 
 import styles from './IndexOverview.css'
 
@@ -18,45 +19,39 @@ export function IndexOverview() {
   })
 
   return (
-    <div>
-      <MappingModal {...{ index, modalRef }} />
+    <>
+      <DialogModal {...{ index, modalRef }} />
       <GridTable>
-        <GridRow>
-          <HeaderGridCell layoutClassName={styles.indexGridCellLayout}>Index name</HeaderGridCell>
-          <HeaderGridCell>Doc count</HeaderGridCell>
-          <HeaderGridCell>Mapping</HeaderGridCell>
+        <GridRow className={styles.gridRow}>
+          <GridCellWithLeftPadding layoutClassName={styles.indexCellLayout}>Index name</GridCellWithLeftPadding>
+          <GridCell layoutClassName={styles.docCountCellLayout}>Doc count</GridCell>
+          <GridCell layoutClassName={styles.mappingButtonCellLayout}>Mapping</GridCell>
         </GridRow>
         {
           indices.map(({ index, ['docs.count']: count }) => (
             <GridRow key={index}>
-              <GridCellWithPadding layoutClassName={styles.indexGridCellLayout}>
+              <GridCellWithLeftPadding layoutClassName={styles.indexCellLayout}>
                 <Link to={routeMap.index.documents({ index })}>{index}</Link>
-              </GridCellWithPadding>
-              <GridCellWithPadding>{count}</GridCellWithPadding>
-              <GridCell>
-                <button className={cx(styles.buttonLayout, styles.gridButton)} onClick={() => {
-                  setIndex(index)
-                  modalRef.current.showModal()
-                }}>
+              </GridCellWithLeftPadding>
+              <GridCell layoutClassName={styles.docCountCellLayout}>{count}</GridCell>
+              <GridCell layoutClassName={styles.mappingButtonCellLayout}>
+                <Button onClick={() => handleClick(index)}>
                   Show mapping
-                </button>
+                </Button>
               </GridCell>
             </GridRow>
           ))
         }
       </GridTable>
-    </div>
+    </>
   )
+
+  function handleClick(index) {
+    setIndex(index)
+    modalRef.current.showModal()
+  }
 
   async function getIndices() {
     return apiCall(apiUrls.indices())
   }
 }
-
-function HeaderGridCell({ children, layoutClassName = undefined }) {
-  return (
-    <GridCellWithPadding className={styles.gridHeader} {...{ layoutClassName }}>
-      {children}
-    </GridCellWithPadding>
-  )
-} 

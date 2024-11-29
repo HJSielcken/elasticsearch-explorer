@@ -2,12 +2,10 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { routeMap } from './routeMap'
 import { LocationProvider, useRouting } from '@kaliber/routing'
 import { useRenderOnMount } from '@kaliber/use-render-on-mount'
-import { Link } from '@kaliber/routing'
+import { Page } from './pages/Page'
 
 import { IndexOverview } from './pages/IndexOverview'
 import { DocumentOverview } from './pages/DocumentOverview'
-
-import styles from './App.css'
 
 const client = new QueryClient()
 
@@ -31,22 +29,12 @@ function Site() {
   const { matchRoutes } = useRouting()
 
   return (
-    <div>
-      <SiteHeader />
+    <Page>
       {matchRoutes(
         [routeMap.home, <b>Home</b>],
         [routeMap.index.overview, <IndexOverview />],
         [routeMap.index.documents, <DocumentOverview />],
       )}
-    </div>
-  )
-}
-
-function SiteHeader() {
-  return (
-    <div className={styles.headerLayout}>
-      <Link to={routeMap.home()}>Home</Link>
-      <Link to={routeMap.index.overview()}>Overview</Link>
-    </div>
+    </Page>
   )
 }

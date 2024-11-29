@@ -1,78 +1,74 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { apiCall, apiUrls } from '/api'
+import { Button } from './Button'
 
 import styles from './Dialog.css'
 
-export function MappingModal({ index, modalRef }) {
+export function DialogModal({ index, modalRef }) {
   const { mapping } = useMapping({ index })
 
   return (
-    <dialog ref={modalRef}>
-      <div className={styles.mappingLayout}>
-        <div className={cx(styles.indexLayout, styles.index)}>{index}</div>
-        <ButtonBox>
-          <button onClick={() => { modalRef.current.close() }}>Close dialog</button>
-        </ButtonBox>
-        <code>
-          <pre>
-            {JSON.stringify(mapping, null, 2)}
-          </pre>
-        </code>
-      </div>
-    </dialog>
+    <DialogBase title={index} {...{ modalRef }}>
+      <FormattedJson data={mapping} />
+    </DialogBase>
   )
 }
 
 export function DocumentModal({ index, documentId, modalRef }) {
   const contentRef = React.useRef(null)
-  const queryClient = useQueryClient()
-  const { data: document } = useQuery({
-    queryKey: [index, 'document', documentId],
-    queryFn: () => getDocument({ index, documentId })
-  })
+  const title = `${index} - ${documentId}`
 
   useRefetchOnClose({ modalRef, index, documentId })
+  const { document, actions } = useDocumentActions({ index, documentId, modalRef })
 
-  const { isPending, mutate: updateDoc } = useMutation({
-    mutationFn: (textContent) => updateDocument({ textContent, index, documentId }),
-  })
-
-  const { mutate: deleteDoc } = useMutation({
-    mutationFn: () => deleteDocument({ index, documentId }),
-    onSuccess: (queryKey) => {
-      queryClient.removeQueries({
-        queryKey
-      })
-      modalRef.current.close()
-    }
-  })
-
-  const { mutate: copyDoc } = useMutation({
-    mutationFn: () => copyDocument({ index, document }),
-  })
+  const buttons = [
+    <Button onClick={() => actions.update.mutate(contentRef.current.textContent)}>Update document</Button>,
+    <Button onClick={() => actions.delete.mutate(contentRef.current.textContent)}>Delete document</Button>,
+    <Button onClick={() => actions.copy.mutate(contentRef.current.textContent)}>Copy document</Button>,
+  ]
 
   return (
-    <dialog ref={modalRef}>
-      <div className={styles.documentLayout}>
-        <div className={cx(styles.indexLayout, styles.index)}>
-          {index} - {documentId}
-        </div>
+    <DialogBase {...{ title, buttons, modalRef }}>
+      {actions.update.isPending ? 'Loading' : <FormattedJsonEdittable data={document} {...{ contentRef }} />}
+    </DialogBase>
+  )
+}
+
+function DialogBase({ title, modalRef, buttons = undefined, children = undefined }) {
+  return (
+    <dialog className={styles.componentLayout} ref={modalRef}>
+      <div className={styles.containerLayout}>
+        <DialogHeading>{title}</DialogHeading>
         <ButtonBox>
-          <button onClick={() => { modalRef.current.close() }}>Close dialog</button>
-          <button onClick={() => updateDoc(contentRef.current.textContent)}>Update document</button>
-          <button onClick={() => deleteDoc(contentRef.current.textContent)}>Delete document</button>
-          <button onClick={() => copyDoc(contentRef.current.textContent)}>Copy document</button>
+          <Button onClick={handleClick}>Close Dialog</Button>
+          {buttons}
         </ButtonBox>
-        {isPending
-          ? <>Loading...</>
-          :
-          <pre className={styles.formattedJSON} contentEditable suppressContentEditableWarning ref={contentRef}>
-            {JSON.stringify(document, null, 2)}
-          </pre>
-        }
+        {children}
       </div>
     </dialog>
   )
+
+  function handleClick() {
+    modalRef.current.close()
+  }
+}
+
+function DialogHeading({ children }) {
+  return <div className={cx(styles.componentDialogHeadingLayout, styles.componentDialogHeading)}>{children}</div>
+}
+
+function FormattedJson({ data }) {
+  return (
+    <pre className={styles.componentFormattedJSONLayout}>
+      {JSON.stringify(data, null, 2)}
+    </pre>)
+}
+
+function FormattedJsonEdittable({ data, contentRef }) {
+  return (
+    <pre className={styles.componentFormattedJSONLayout} ref={contentRef} contentEditable suppressContentEditableWarning>
+      {JSON.stringify(data, null, 2)}
+    </pre>)
 }
 
 async function updateDocument({ index, documentId, textContent }) {
@@ -146,4 +142,49 @@ function useRefetchOnClose({ modalRef, index, documentId }) {
     return modalRef.current.removeEventListener('close', onClose)
   }, [index, modalRef.current, documentId]
   )
+}
+
+function useDocumentActions({ index, documentId, modalRef }) {
+  const queryClient = useQueryClient()
+
+  const { data: document } = useQuery({
+    queryKey: [index, 'document', documentId],
+    queryFn: () => getDocument({ index, documentId })
+  })
+
+  useRefetchOnClose({ modalRef, index, documentId })
+
+  const { isPending, mutate: updateDoc } = useMutation({
+    mutationFn: (textContent) => updateDocument({ textContent, index, documentId }),
+  })
+
+  const { mutate: deleteDoc } = useMutation({
+    mutationFn: () => deleteDocument({ index, documentId }),
+    onSuccess: (queryKey) => {
+      queryClient.removeQueries({
+        queryKey
+      })
+      modalRef.current.close()
+    }
+  })
+
+  const { mutate: copyDoc } = useMutation({
+    mutationFn: () => copyDocument({ index, document }),
+  })
+
+  return {
+    document,
+    actions: {
+      update: {
+        isPending,
+        mutate: updateDoc,
+      },
+      delete: {
+        mutate: deleteDoc
+      },
+      copy: {
+        mutate: copyDoc
+      }
+    }
+  }
 }
