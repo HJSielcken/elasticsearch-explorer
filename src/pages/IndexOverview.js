@@ -2,7 +2,7 @@ import { Link } from '@kaliber/routing'
 import { useQuery } from '@tanstack/react-query'
 import { routeMap } from '/routeMap'
 import { GridCell, GridCellWithPadding, GridRow, GridTable } from '/features/Grid'
-import { apiCall, apiUrls } from '/api'
+import { apiCall, apiUrls, sendMessage } from '/api'
 import { MappingModal } from '/features/Dialog'
 
 import styles from './IndexOverview.css'
@@ -49,6 +49,7 @@ export function IndexOverview() {
   )
 
   async function getIndices() {
+    sendMessage()
     return apiCall(apiUrls.indices())
   }
 }

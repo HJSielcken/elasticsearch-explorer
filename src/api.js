@@ -18,3 +18,13 @@ export async function apiCall(url, { method = 'GET', body = undefined } = {}) {
     }
   }).then(x => x.json())
 }
+
+export function sendMessage() {
+  console.log(chrome)
+
+  chrome.runtime.sendMessage({ action: 'getData', data: 'example' },
+    function (response) {
+      console.log('Response from background script:', response);
+    }
+  )
+}

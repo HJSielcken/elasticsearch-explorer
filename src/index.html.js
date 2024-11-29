@@ -1,7 +1,7 @@
 import { stylesheet } from '@kaliber/esbuild/stylesheet'
 import { javascript } from '@kaliber/esbuild/javascript'
 
-import App from './App.universal'
+import App from './App?universal'
 
 import './reset.entry.css'
 

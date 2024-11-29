@@ -1,22 +1,14 @@
 {
   "manifest_version": 3,
-  "name": "Full Page Extension",
+  "name": "Elasticsearch Explorer",
   "version": "1.0",
-  "description": "This extension opens a full-page UI.",
+  "description": "Elasticsearch Explorer",
   "action": {},
-  "permissions": [],
   "host_permissions": [
-    "http://localhost:9200/*"
+    "http://*/*",
+    "https://*/*"
   ],
   "background": {
     "service_worker": "background.js"
-  },
-  "sandbox": {
-    "pages": [
-      "index.html"
-    ]
-  },
-  "content_security_policy": {
-     "sandbox": "sandbox allow-scripts; script-src 'self' 'unsafe-inline'"
   }
 }
