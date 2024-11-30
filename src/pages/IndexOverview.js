@@ -5,6 +5,7 @@ import { GridCell, GridCellWithLeftPadding, GridRow, GridTable } from '/features
 import { apiCall, apiUrls } from '/api'
 import { DialogModal } from '/features/Dialog'
 import { Button } from '/features/Button'
+import { Page } from './Page'
 
 import styles from './IndexOverview.css'
 
@@ -18,23 +19,25 @@ export function IndexOverview() {
     initialData: []
   })
 
+  const maxCount = React.useMemo(() => String(Math.max(...indices.map(x => x['docs.count']))).length, [indices])
+
   return (
-    <>
+    <Page>
       <DialogModal {...{ index, modalRef }} />
       <GridTable>
         <GridRow className={styles.gridRow}>
           <GridCellWithLeftPadding layoutClassName={styles.indexCellLayout}>Index name</GridCellWithLeftPadding>
-          <GridCell layoutClassName={styles.docCountCellLayout}>Doc count</GridCell>
-          <GridCell layoutClassName={styles.mappingButtonCellLayout}>Mapping</GridCell>
+          <GridCellWithLeftPadding layoutClassName={styles.docCountCellLayout}>Doc count</GridCellWithLeftPadding>
+          <GridCellWithLeftPadding layoutClassName={styles.mappingButtonCellLayout}>Mapping</GridCellWithLeftPadding>
         </GridRow>
         {
           indices.map(({ index, ['docs.count']: count }) => (
             <GridRow key={index}>
-              <GridCellWithLeftPadding layoutClassName={styles.indexCellLayout}>
+              <GridCellWithLeftPadding className={styles.gridCell} layoutClassName={styles.indexCellLayout}>
                 <Link to={routeMap.index.documents({ index })}>{index}</Link>
               </GridCellWithLeftPadding>
-              <GridCell layoutClassName={styles.docCountCellLayout}>{count}</GridCell>
-              <GridCell layoutClassName={styles.mappingButtonCellLayout}>
+              <GridCellWithLeftPadding className={styles.gridCell} layoutClassName={styles.docCountCellLayout}>{String(count).padStart(maxCount, '0')}</GridCellWithLeftPadding>
+              <GridCell className={styles.gridCell} layoutClassName={styles.mappingButtonCellLayout}>
                 <Button onClick={() => handleClick(index)}>
                   Show mapping
                 </Button>
@@ -43,8 +46,9 @@ export function IndexOverview() {
           ))
         }
       </GridTable>
-    </>
+    </Page>
   )
+  { "0".pa }
 
   function handleClick(index) {
     setIndex(index)

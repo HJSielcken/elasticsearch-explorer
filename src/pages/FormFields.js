@@ -1,6 +1,7 @@
 import { useFormField } from '@kaliber/forms'
 
 import styles from './FormFields.css'
+import { Button } from '/features/Button'
 
 export function MultiSelect({ field, options = [], initialValue}) {
   const [isOpen, setIsOpen] = React.useState(false)
@@ -9,7 +10,7 @@ export function MultiSelect({ field, options = [], initialValue}) {
 
   return (
     <div className={styles.multiSelectLayout}>
-      <button onClick={() => setIsOpen(x => !x)}>Select columns ↓</button>
+      <Button onClick={() => setIsOpen(x => !x)}>Select Columns ↓</Button>
       <ul className={cx(isOpen && styles.multiSelectIsOpen, styles.multiSelectIsOpenLayout)}>
         <li>
           <button className={styles.selectAllButton} onClick={handleSelectAll}>(De)select all</button>

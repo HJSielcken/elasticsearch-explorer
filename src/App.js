@@ -29,12 +29,10 @@ function Site() {
   const { matchRoutes } = useRouting()
 
   return (
-    <Page>
-      {matchRoutes(
-        [routeMap.home, <b>Home</b>],
-        [routeMap.index.overview, <IndexOverview />],
-        [routeMap.index.documents, <DocumentOverview />],
-      )}
-    </Page>
+    matchRoutes(
+      [routeMap.home, <b>Home</b>],
+      [routeMap.index.overview, <IndexOverview />],
+      [routeMap.index.documents, <DocumentOverview />],
+    )
   )
 }

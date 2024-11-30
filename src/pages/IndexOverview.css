@@ -4,6 +4,7 @@
 
 .docCountCellLayout {
   flex: 0 0 100px;
+  padding-right: 4px;
 }
 
 .mappingButtonCellLayout {
@@ -12,6 +13,10 @@
 
 .gridRow {
   background-color: teal;
+}
+
+.gridCell {
+  border-right: 1px black solid;
 }
 
 .buttonLayout {
