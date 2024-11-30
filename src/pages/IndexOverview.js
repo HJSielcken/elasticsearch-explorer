@@ -48,7 +48,6 @@ export function IndexOverview() {
       </GridTable>
     </Page>
   )
-  { "0".pa }
 
   function handleClick(index) {
     setIndex(index)

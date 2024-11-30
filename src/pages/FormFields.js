@@ -1,15 +1,20 @@
 import { useFormField } from '@kaliber/forms'
-
-import styles from './FormFields.css'
+import { useEvent } from '/features/Dialog'
 import { Button } from '/features/Button'
 
-export function MultiSelect({ field, options = [], initialValue}) {
+import styles from './FormFields.css'
+
+export function MultiSelect({ field, options = [] }) {
+  const elementRef = React.useRef(null)
   const [isOpen, setIsOpen] = React.useState(false)
+
+  useClickOutsideElement(elementRef, () => { setIsOpen(false) })
+
   const { name, state, eventHandlers: { onChange } } = useFormField(field)
-  const { value = initialValue } = state
+  const { value } = state
 
   return (
-    <div className={styles.multiSelectLayout}>
+    <div className={styles.multiSelectLayout} ref={elementRef}>
       <Button onClick={() => setIsOpen(x => !x)}>Select Columns ↓</Button>
       <ul className={cx(isOpen && styles.multiSelectIsOpen, styles.multiSelectIsOpenLayout)}>
         <li>
@@ -34,4 +39,24 @@ export function MultiSelect({ field, options = [], initialValue}) {
   function handleSelectAll() {
     value.length === options.length ? onChange([]) : onChange(options)
   }
+}
+
+
+/**
+ * @param {import('react').RefObject<HTMLHtmlElement>} elementRef 
+ * @param {(...args) => void} onClick 
+ */
+export function useClickOutsideElement(elementRef, onClick) {
+  const handleClick = useEvent(e => {
+    const isInsideElement = elementRef.current.contains(e.target)
+    if (isInsideElement) return
+    onClick()
+  })
+
+  React.useEffect(
+    () => {
+      document.addEventListener('click', handleClick)
+      return () => document.removeEventListener('click', handleClick)
+    },
+    [])
 }

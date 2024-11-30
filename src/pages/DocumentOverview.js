@@ -23,13 +23,6 @@ export function DocumentOverview() {
   const modalRef = React.useRef(null)
   const [documentId, setDocumentId] = React.useState(null)
 
-  const { form } = useForm({
-    fields: {
-      columnsToShow: optional
-    },
-    onSubmit: () => { }
-  })
-
   const { data } = useQuery({
     queryKey: [index, 'documents', JSON.stringify(query)],
     queryFn: () => getDocuments({ index, query }),
@@ -39,6 +32,16 @@ export function DocumentOverview() {
   const { documents } = data
   const [{ _id, ...document } = {}] = documents
   const keys = Object.keys(document || [])
+
+  const { form } = useForm({
+    fields: {
+      columnsToShow: optional
+    },
+    initialValues: {
+      columnsToShow: keys
+    },
+    onSubmit: () => { }
+  })
 
   return (
     <Page>
@@ -100,7 +103,12 @@ function FilterForm({ columnToShowField, index, columns, onFilterChange, fields 
       const orFilters = value.or.map(toFilter).filter(Boolean)
       const notFilters = value.not.map(toFilter).filter(Boolean)
 
-      const query = and(matchAll(), or(...orFilters), not(...notFilters), and(...andFilters))
+      const query = and(
+        matchAll(),
+        or(...orFilters),
+        not(...notFilters),
+        and(...andFilters)
+      )
 
       onFilterChange(query)
     }
@@ -160,8 +168,8 @@ function FilterField({ field, fields, title }) {
     <div className={styles.componentfilterFieldLayout}>
       <div className={styles.filterFieldHeaderLayout}>
         <div className={styles.filterFieldTitle}>{title}</div>
-        <Button onClick={() => helpers.add({ _type: 'keyword' })} layoutClassName={styles.filterFieldButton}>+Keyword</Button>
-        <Button onClick={() => helpers.add({ _type: 'text' })} layoutClassName={styles.filterFieldButton}>+Text</Button>
+        <Button onClick={() => helpers.add({ _type: 'keyword', keyword: [] })} layoutClassName={styles.filterFieldButton}>+Keyword</Button>
+        <Button onClick={() => helpers.add({ _type: 'text', text: '' })} layoutClassName={styles.filterFieldButton}>+Text</Button>
       </div>
       <div className={styles.filterFieldsLayout}>
         {children.map(field => {
@@ -169,9 +177,7 @@ function FilterField({ field, fields, title }) {
           if (_type === 'keyword') return <KeywordFilterField key={field.name} keywordFields={keyword} {...{ field, helpers, optionsPerKeyword }} />
           if (_type === 'text') return <TextFilterField key={field.name} textFields={text} {...{ field, helpers }} />
         })}
-
       </div>
-
     </div>
   )
 }
@@ -217,13 +223,7 @@ function KeywordFilterField({ field, keywordFields, helpers, optionsPerKeyword }
         <option>Select Field</option>
         {keywordFields.map(x => <option key={x} defaultValue={fieldname.state.value}>{x}</option>)}
       </select>
-      {/* <div>
-        <select className={styles.selectFieldLayout} name={`${fieldname.name}_keyword`} onChange={handleTextChange} >
-          <option>Select value</option>
-          {optionsPerKeyword[fieldname.state.value]?.map(x => <option key={x} value={x}>{x}</option>)}
-        </select>
-      </div> */}
-      <MultiSelect options={optionsPerKeyword[fieldname.state.value]} field={field.fields.keyword} initialValue={[]} />
+      <MultiSelect options={optionsPerKeyword[fieldname.state.value]} field={field.fields.keyword} />
     </div>
   )
 
@@ -231,11 +231,6 @@ function KeywordFilterField({ field, keywordFields, helpers, optionsPerKeyword }
     const fieldnameValue = e.target.value
     fieldname.eventHandlers.onChange(fieldnameValue)
     keyword.eventHandlers.onChange('')
-  }
-
-  function handleTextChange(e) {
-    const keywordValue = e.target.value
-    keyword.eventHandlers.onChange(keywordValue)
   }
 
   function handleDelete() {
@@ -262,8 +257,6 @@ function useFilterFields(index) {
     queryFn: () => getAggregations({ keyword, index })
   })
 
-  console.log(optionsPerKeyword)
-
   return { keyword, text, optionsPerKeyword }
 }
 
@@ -281,8 +274,6 @@ async function getAggregations({ keyword, index }) {
     return { terms: { field: x } }
   }
 }
-
-
 
 function extractFieldsWithType(mapping, type, path = []) {
   return Object.entries(mapping).reduce(
