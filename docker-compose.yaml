@@ -15,4 +15,4 @@ services:
     ports:
       - 9200:9200
       - 9300:9300
-    mem_limit: 2g
+    mem_limit: 500mb

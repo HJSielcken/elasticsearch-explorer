@@ -1,10 +1,22 @@
-.indexGridCellLayout {
+.indexCellLayout {
   flex: 0 0 800px;
 }
 
-.gridHeader {
+.docCountCellLayout {
+  flex: 0 0 100px;
+  padding-right: 4px;
+}
+
+.mappingButtonCellLayout {
+  flex: 0 0 auto;
+}
+
+.gridRow {
   background-color: teal;
-  border-bottom: 2px solid black;
+}
+
+.gridCell {
+  border-right: 1px black solid;
 }
 
 .buttonLayout {

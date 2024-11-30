@@ -13,7 +13,7 @@
   overflow-y: scroll;
   transition: max-height 0.2s;
   position: absolute;
-  top: 30px;
+  top: 25px;
   width: 100%;
 
   &.multiSelectIsOpen {
@@ -23,7 +23,9 @@
     
     max-height: 600px;
     background-color: rgb(93, 201, 201);
-    border: 1px black solid;
+    /* border-left: 1px black solid;/ */
+    /* border-right: 1px black solid; */
+    /* border-left: 1px black solid; */
 
     >li {
       display: flex;
