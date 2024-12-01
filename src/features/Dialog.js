@@ -22,9 +22,9 @@ export function DocumentModal({ index, documentId, modalRef }) {
   const { document, actions } = useDocumentActions({ index, documentId, modalRef })
 
   const buttons = [
-    <Button onClick={() => actions.update.mutate(contentRef.current.textContent)}>Update document</Button>,
-    <Button onClick={() => actions.delete.mutate(contentRef.current.textContent)}>Delete document</Button>,
-    <Button onClick={() => actions.copy.mutate(contentRef.current.textContent)}>Copy document</Button>,
+    <Button key='update' onClick={() => actions.update.mutate(contentRef.current.textContent)}>Update document</Button>,
+    <Button key='delete' onClick={() => actions.delete.mutate(contentRef.current.textContent)}>Delete document</Button>,
+    <Button key='copy' onClick={() => actions.copy.mutate(contentRef.current.textContent)}>Copy document</Button>,
   ]
 
   return (

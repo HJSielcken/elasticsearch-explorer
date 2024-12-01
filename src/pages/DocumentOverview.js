@@ -70,9 +70,9 @@ function DocumentTable({ documents, columns }) {
           ID
         </GridCell>
         {
-          documents.map(x => (
-            <GridCell>
-              <Button onClick={() => handleDocumentClick(x)}>{x._id}</Button>
+          documents.map(document => (
+            <GridCell key={document._id}>
+              <Button onClick={() => handleDocumentClick(document)}>{document._id}</Button>
             </GridCell>
           )
           )
@@ -84,7 +84,7 @@ function DocumentTable({ documents, columns }) {
             {column}
           </GridCell>
           {
-            documents.map(document => <GridCell className={styles.gridCell}>{normalizeJson(document[column])}</GridCell>)
+            documents.map(document => <GridCell key={document._id} className={styles.gridCell}>{normalizeJson(document[column])}</GridCell>)
           }
         </GridColumn>
       ))}

@@ -28,7 +28,7 @@ export function IndexOverview() {
         <GridColumn layoutClassName={styles.mappingButtonCellLayout}>
           <GridCell className={styles.headerGridCell}>Mapping</GridCell>
           {indices.map(({ index }) => (
-            <GridCell>
+            <GridCell key={index}>
               <Button onClick={() => handleClick(index)}>
                 Show mapping
               </Button>
@@ -38,15 +38,15 @@ export function IndexOverview() {
         <GridColumn layoutClassName={styles.indexCellLayout}>
           <GridCell className={styles.headerGridCell}>Index name</GridCell>
           {indices.map(({ index }) => (
-            <GridCell className={styles.gridCell}>
+            <GridCell  key={index} className={styles.gridCell}>
               <Link to={routeMap.index.documents({ index })}>{index}</Link>
             </GridCell>
           ))}
         </GridColumn>
         <GridColumn layoutClassName={styles.docCountCellLayout}>
           <GridCell className={styles.headerGridCell}>Doc count</GridCell>
-          {indices.map(({ ['docs.count']: count }) => (
-            <GridCell className={styles.gridCell}>
+          {indices.map(({ index, ['docs.count']: count }) => (
+            <GridCell key={index} className={styles.gridCell}>
               {String(count).padStart(maxCount, '0')}
             </GridCell>
           ))}

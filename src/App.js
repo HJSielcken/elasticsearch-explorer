@@ -1,6 +1,6 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { routeMap } from './routeMap'
-import { LocationProvider, useRouting } from '@kaliber/routing'
+import { LocationProvider, useLocation, useLocationMatch, useRouting } from '@kaliber/routing'
 import { useRenderOnMount } from '@kaliber/use-render-on-mount'
 
 import { DocumentOverview } from './pages/DocumentOverview'
@@ -12,8 +12,7 @@ const client = new QueryClient()
 export default function App() {
   const isMounted = useRenderOnMount()
 
-  const initialLocation = { pathname: '/' }
-
+  const initialLocation = { pathname: '/', hash: '/' }
   if (!isMounted) return <div />
 
   return (
@@ -27,10 +26,12 @@ export default function App() {
 
 function Site() {
   const { matchRoutes } = useRouting()
+  const location = useLocation()
 
   return (
     matchRoutes(
-      [routeMap.home, <Page>Home</Page>],
+      [routeMap.home, <IndexOverview />],
+      [routeMap.home2, <IndexOverview />],
       [routeMap.index.overview, <IndexOverview />],
       [routeMap.index.documents, <DocumentOverview />],
     )

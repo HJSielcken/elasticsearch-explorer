@@ -1,7 +1,11 @@
 import { asRouteMap } from '@kaliber/routing'
 
 export const routeMap = asRouteMap({
+
   home: {
+    path: 'index.html'
+  },
+  home2: {
     path: ''
   },
   index: {
@@ -15,5 +19,8 @@ export const routeMap = asRouteMap({
         path: ':id'
       }
     }
-  }
+  },
+  notFound: {
+    path: '*'
+  },
 })
