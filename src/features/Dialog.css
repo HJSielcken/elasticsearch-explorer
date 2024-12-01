@@ -9,12 +9,15 @@
 
 
 .buttonBoxLayout {
+  width: 100%;
   padding: 2px;
   display: flex;
   flex-direction: row;
   gap: 2px;
-  align-items: center;
-  justify-content: left;
+
+  &>* {
+    flex: 1;
+  }
 }
 
 .componentLayout {

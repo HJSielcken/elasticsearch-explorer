@@ -118,7 +118,7 @@ async function getMapping({ index }) {
   return response[index].mappings
 }
 
-function useEvent(fn) {
+export function useEvent(fn) {
   const fnRef = React.useRef(null)
   fnRef.current = fn
 
