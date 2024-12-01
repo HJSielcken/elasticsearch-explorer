@@ -4,6 +4,12 @@ export default process.env.BROWSER === 'firefox' ? ({
   "version": "1.0",
   "description": "Elasticsearch Explorer",
   "action": {},
+  "browser_specific_settings": {
+    "gecko": {
+    "id": "harmen.sielcken@gmail.com",
+    "strict_min_version": "58.0"
+    }
+  },
   "host_permissions": [
     "http://*/*",
     "https://*/*"
