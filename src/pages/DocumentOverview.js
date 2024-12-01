@@ -5,7 +5,7 @@ import { useLocationMatch } from '@kaliber/routing'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { apiCall, apiUrls } from '/api'
 
-import { GridCell, GridCellWithLeftPadding, GridRow, GridTable } from '/features/Grid'
+import { GridCell, GridColumn, GridTable } from '/features/Grid'
 import { MultiSelect } from './FormFields'
 import { DocumentModal, useMapping } from '/features/Dialog'
 import { FormFieldValue } from '@kaliber/forms/components'
@@ -15,13 +15,9 @@ import { Button } from '/features/Button'
 import styles from './DocumentOverview.css'
 
 export function DocumentOverview() {
-
   const [query, setQuery] = React.useState(matchAll())
-  const { params } = useLocationMatch()
-  const { index } = params
+  const { params: { index } } = useLocationMatch()
   const fields = useFilterFields(index)
-  const modalRef = React.useRef(null)
-  const [documentId, setDocumentId] = React.useState(null)
 
   const { data } = useQuery({
     queryKey: [index, 'documents', JSON.stringify(query)],
@@ -29,59 +25,75 @@ export function DocumentOverview() {
     initialData: { documents: [], total: 0 }
   })
 
-  const { documents } = data
-  const [{ _id, ...document } = {}] = documents
-  const keys = Object.keys(document || [])
+  const normalizedDocuments = React.useMemo(
+    () => data.documents.map(fields.extractFieldsFromDocument)
+    , [data]
+  )
 
   const { form } = useForm({
     fields: {
       columnsToShow: optional
     },
     initialValues: {
-      columnsToShow: keys
+      columnsToShow: fields.all
     },
     onSubmit: () => { }
   })
 
   return (
     <Page>
-      <DocumentModal {...{ index, documentId, modalRef }} />
-      <FilterForm {...{ index }} onFilterChange={handleFilterChange} columnToShowField={form.fields.columnsToShow} columns={keys} {...{ fields }} />
-      <FormFieldValue field={form.fields.columnsToShow} render={(value = keys) => {
-        const columns = keys.filter(x => value.includes(x))
-        return <DocumentTable {...{ documents, columns }} />
+      <FilterForm {...{ index }} onFilterChange={handleFilterChange} columnToShowField={form.fields.columnsToShow} columns={fields.all} {...{ fields }} />
+      <FormFieldValue field={form.fields.columnsToShow} render={value => {
+        const columns = fields.all.filter(x => value.includes(x))
+        return <DocumentTable documents={normalizedDocuments} {...{ columns }} />
       }
       } />
     </Page>
   )
 
-  function DocumentTable({ documents, columns }) {
-    return (
-      <GridTable>
-        <GridRow className={styles.gridRow}>
-          <GridCellWithLeftPadding className={styles.headerGridCell} layoutClassName={styles.idCellLayout}>_id</GridCellWithLeftPadding>
-          {columns.map(key => <GridCellWithLeftPadding key={key} className={styles.headerGridCell} layoutClassName={styles.documentFieldsCellLayout}>{key}</GridCellWithLeftPadding>)}
-        </GridRow>
-        {documents.map(document => (
-          <GridRow key={document._id} >
-            <GridCell layoutClassName={styles.idCellLayout}>
-              <Button onClick={() => handleDocumentClick(document)} >{document._id} </Button>
-            </GridCell>
-            {columns.map(key => <GridCellWithLeftPadding key={key} className={styles.gridCell} layoutClassName={styles.documentFieldsCellLayout}>{normalizeJson(document[key])}</GridCellWithLeftPadding>)}
-          </GridRow>
-        )
-        )}
-      </GridTable>
-    )
+  function handleFilterChange(query) {
+    setQuery(query)
   }
+}
+
+function DocumentTable({ documents, columns }) {
+  const modalRef = React.useRef(null)
+  const [documentId, setDocumentId] = React.useState(null)
+  const { params } = useLocationMatch()
+  const { index } = params
+
+  return (
+    <GridTable layoutClassName={styles.documentGridLayout}>
+      <DocumentModal {...{ index, documentId, modalRef }} />
+      <GridColumn layoutClassName={styles.idCellLayout}>
+        <GridCell className={styles.headerGridCell}>
+          ID
+        </GridCell>
+        {
+          documents.map(x => (
+            <GridCell>
+              <Button onClick={() => handleDocumentClick(x)}>{x._id}</Button>
+            </GridCell>
+          )
+          )
+        }
+      </GridColumn>
+      {columns.map(column => (
+        <GridColumn key={column}>
+          <GridCell className={styles.headerGridCell}>
+            {column}
+          </GridCell>
+          {
+            documents.map(document => <GridCell className={styles.gridCell}>{normalizeJson(document[column])}</GridCell>)
+          }
+        </GridColumn>
+      ))}
+    </GridTable>
+  )
 
   function handleDocumentClick(document) {
     setDocumentId(document._id)
     modalRef.current.showModal()
-  }
-
-  function handleFilterChange(query) {
-    setQuery(query)
   }
 }
 
@@ -99,17 +111,7 @@ function FilterForm({ columnToShowField, index, columns, onFilterChange, fields 
       not: []
     },
     onSubmit: ({ value }) => {
-      const andFilters = value.and.map(toFilter).filter(Boolean)
-      const orFilters = value.or.map(toFilter).filter(Boolean)
-      const notFilters = value.not.map(toFilter).filter(Boolean)
-
-      const query = and(
-        matchAll(),
-        or(...orFilters),
-        not(...notFilters),
-        and(...andFilters)
-      )
-
+      const query = generateQuery(value)
       onFilterChange(query)
     }
   })
@@ -119,14 +121,14 @@ function FilterForm({ columnToShowField, index, columns, onFilterChange, fields 
       <FilterField field={form.fields.and} title='AND' {...{ fields }} />
       <FilterField field={form.fields.or} title='OR' {...{ fields }} />
       <FilterField field={form.fields.not} title='NOT' {...{ fields }} />
-      {/* <div className={styles.buttonRowLayout}> */}
-      {/* <div className={styles.buttonsLayout}> */}
-      {/* <button className={styles.buttonLayout} onClick={submit}>Search</button> */}
-      {/* <button className={styles.buttonLayout} onClick={handleReset}>Reset</button> */}
-      {/* <button className={styles.buttonLayout} onClick={handleRefresh}>Refresh</button> */}
-      {/* </div> */}
-      {/* <MultiSelect field={columnToShowField} options={columns} initialValue={columns} /> */}
-      {/* </div> */}
+      <div className={styles.buttonRowLayout}>
+        <div className={styles.formButtonsLayout}>
+          <Button className={styles.buttonLayout} onClick={submit}>Search</Button>
+          <Button className={styles.buttonLayout} onClick={handleReset}>Reset</Button>
+          <Button className={styles.buttonLayout} onClick={handleRefresh}>Refresh</Button>
+        </div>
+        <MultiSelect field={columnToShowField} options={columns} />
+      </div>
     </div>
   )
 
@@ -144,20 +146,13 @@ function FilterForm({ columnToShowField, index, columns, onFilterChange, fields 
   }
 }
 
-function toFilter({ _type, fieldname, ...rest }) {
-  const keyword = ensureArray(rest.keyword)
-  const text = ensureText(rest.text)
-  if (_type === 'keyword') return keyword.length && terms(fieldname, keyword)
-  if (_type === 'text') return text && search([fieldname], ensureText(text))
-  return null
-}
-
-function ensureArray(value) {
-  return [].concat(value).filter(Boolean)
-}
-
-function ensureText(value) {
-  return String(value)
+function filterField() {
+  return value => ({
+    _type: required,
+    fieldname: required,
+    ...(value._type === 'keyword' && { keyword: required }),
+    ...(value._type === 'text' && { text: required })
+  })
 }
 
 function FilterField({ field, fields, title }) {
@@ -238,56 +233,36 @@ function KeywordFilterField({ field, keywordFields, helpers, optionsPerKeyword }
   }
 }
 
-function filterField() {
-  return value => ({
-    _type: required,
-    fieldname: required,
-    ...(value._type === 'keyword' && { keyword: required }),
-    ...(value._type === 'text' && { text: required })
-  })
-}
-
 function useFilterFields(index) {
   const { mapping } = useMapping({ index })
   const keyword = React.useMemo(() => extractFieldsWithType(mapping, 'keyword'), [mapping])
   const text = React.useMemo(() => extractFieldsWithType(mapping, 'text'), [mapping])
+  const all = React.useMemo(() => [...text, ...keyword], [text, keyword])
+
+  const extractFields = React.useMemo(
+    () => Object.fromEntries(['_id', ...all]
+      .map(path => [path, document => resolveField(document, path)])
+    ),
+    [keyword]
+  )
+
+  const extractFieldsFromDocument = React.useCallback(document => mapValues(extractFields, v => v(document)), [extractFields])
 
   const { data: optionsPerKeyword } = useQuery({
     queryKey: [index, 'aggregations', keyword],
     queryFn: () => getAggregations({ keyword, index })
   })
 
-  return { keyword, text, optionsPerKeyword }
+  return { keyword, text, all, optionsPerKeyword, extractFieldsFromDocument }
 }
 
-
 async function getAggregations({ keyword, index }) {
-  const aggs = Object.fromEntries(keyword.map(x => [x, terms(x)]))
+  const aggs = Object.fromEntries(keyword.map(x => [x, termsAgg(x)]))
   const body = { aggs, size: 0 }
 
   const response = await apiCall(apiUrls.search({ index }), { method: 'POST', body })
-  return Object.fromEntries(
-    Object.entries(response.aggregations).map(([k, v]) => [k, v.buckets.map(x => x.key)])
-  )
 
-  function terms(x) {
-    return { terms: { field: x } }
-  }
-}
-
-function extractFieldsWithType(mapping, type, path = []) {
-  return Object.entries(mapping).reduce(
-    (result, [k, v]) => {
-      if (typeof v === 'object')
-        return [...extractFieldsWithType(v, type, [...path, k]), ...result]
-
-      if (v === type)
-        return [path.filter(x => x !== 'properties').join('.'), ...result]
-
-      return result
-    },
-    []
-  )
+  return mapValues(response.aggregations, v => v.buckets.map(x => x.key))
 }
 
 async function getDocuments({ index, query }) {
@@ -307,5 +282,69 @@ async function getDocuments({ index, query }) {
 }
 
 function normalizeJson(o) {
-  return ['string', 'number'].includes(typeof o) ? o : JSON.stringify(o)
+  return ['string', 'number'].includes(typeof o) ? o : Array.isArray(o)
+    ? o.map(normalizeJson).join(',') : JSON.stringify(o)
+}
+
+function ensureArray(value) {
+  return [].concat(value).filter(Boolean)
+}
+
+function ensureText(value) {
+  return String(value)
+}
+
+function termsAgg(x) {
+  return { terms: { field: x } }
+}
+
+function mapValues(o, f) {
+  return Object.fromEntries(
+    Object.entries(o).map(([k, v]) => [k, f(v, k, o)])
+  )
+}
+
+function resolveField(o, path) {
+  return path.split('.').reduce(
+    (result, x) => Array.isArray(result) ? result.map(y => y?.[x]) : result?.[x],
+    o
+  )
+}
+
+function extractFieldsWithType(mapping, type, path = []) {
+  return Object.entries(mapping).reduce(
+    (result, [k, v]) => {
+      if (typeof v === 'object')
+        return [...extractFieldsWithType(v, type, [...path, k]), ...result]
+
+      if (v === type)
+        return [path.filter(x => x !== 'properties').join('.'), ...result]
+
+      return result
+    },
+    []
+  )
+}
+
+function generateQuery(value) {
+  const andFilters = value.and.map(toFilter).filter(Boolean)
+  const orFilters = value.or.map(toFilter).filter(Boolean)
+  const notFilters = value.not.map(toFilter).filter(Boolean)
+
+  const query = and(
+    matchAll(),
+    or(...orFilters),
+    not(...notFilters),
+    and(...andFilters)
+  )
+
+  return query
+}
+
+function toFilter({ _type, fieldname, ...rest }) {
+  const keyword = ensureArray(rest.keyword)
+  const text = ensureText(rest.text)
+  if (_type === 'keyword') return keyword.length && terms(fieldname, keyword)
+  if (_type === 'text') return text && search([fieldname], ensureText(text))
+  return null
 }

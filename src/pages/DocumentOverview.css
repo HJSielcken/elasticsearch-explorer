@@ -1,18 +1,27 @@
 .idCellLayout {
-  flex: 0 0 100px;
+  flex: 0 0 80px;
 }
 
-.documentFieldsCellLayout {
-  flex: 0 0 150px
+.documentGridLayout {
+  display: flex;
+
 }
 
+.documentColumnLayout {
+  padding-right: 20px;
+  padding-left: 20px;
+}
 
 .headerGridCell {
   background-color: teal;
+  padding-left: 4px;
+  padding-right: 4px;
 }
 
 .gridCell {
   border-right: 1px black solid;
+  padding-left: 4px;
+  padding-right: 4px;
 }
 
 .componentFilterFormLayout {
@@ -36,7 +45,20 @@
       text-align: center;
       align-content: center;
     }
+  }
+}
 
+.buttonRowLayout {
+  display: flex;
+  gap: 2px;
+  padding-bottom: 2px;
+  justify-content: space-between;
+
+  &>.formButtonsLayout {
+    flex: 0 0 332px;
+    display: flex;
+    gap: 2px;
+    justify-content: flex-start;
   }
 }
 
@@ -44,7 +66,7 @@
 .componentKeywordFilterFieldLayout {
   display: grid;
   width: 100%;
-  grid-template-columns: 30px 200px auto;
+  grid-template-columns: 30px 189px auto;
   padding-bottom: 2px;
 
   gap: 2px;
