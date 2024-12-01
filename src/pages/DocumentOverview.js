@@ -79,7 +79,7 @@ function DocumentTable({ documents, columns }) {
         }
       </GridColumn>
       {columns.map(column => (
-        <GridColumn key={column}  layoutClassName={styles.documentColumnLayout}>
+        <GridColumn key={column} layoutClassName={styles.documentColumnLayout}>
           <GridCell className={styles.headerGridCell}>
             {column}
           </GridCell>
@@ -118,17 +118,19 @@ function FilterForm({ columnToShowField, index, columns, onFilterChange, fields 
 
   return (
     <div className={styles.componentFilterFormLayout}>
-      <FilterField field={form.fields.and} title='AND' {...{ fields }} />
-      <FilterField field={form.fields.or} title='OR' {...{ fields }} />
-      <FilterField field={form.fields.not} title='NOT' {...{ fields }} />
-      <div className={styles.buttonRowLayout}>
-        <div className={styles.formButtonsLayout}>
-          <Button className={styles.buttonLayout} onClick={submit}>Search</Button>
-          <Button className={styles.buttonLayout} onClick={handleReset}>Reset</Button>
-          <Button className={styles.buttonLayout} onClick={handleRefresh}>Refresh</Button>
+      <form onSubmit={submit}>
+        <FilterField field={form.fields.and} title='AND' {...{ fields }} />
+        <FilterField field={form.fields.or} title='OR' {...{ fields }} />
+        <FilterField field={form.fields.not} title='NOT' {...{ fields }} />
+        <div className={styles.buttonRowLayout}>
+          <div className={styles.formButtonsLayout}>
+            <Button className={styles.buttonLayout} onClick={submit}>Search</Button>
+            <Button className={styles.buttonLayout} onClick={handleReset}>Reset</Button>
+            <Button className={styles.buttonLayout} onClick={handleRefresh}>Refresh</Button>
+          </div>
+          <MultiSelect field={columnToShowField} options={columns} />
         </div>
-        <MultiSelect field={columnToShowField} options={columns} />
-      </div>
+      </form>
     </div>
   )
 
@@ -175,6 +177,11 @@ function FilterField({ field, fields, title }) {
       </div>
     </div>
   )
+
+  function preventEnter(e) {
+    console.log(e)
+    e.preventDefault()
+  }
 }
 
 function TextFilterField({ field, textFields, helpers }) {
