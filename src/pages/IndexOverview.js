@@ -1,7 +1,7 @@
 import { Link } from '@kaliber/routing'
 import { useQuery } from '@tanstack/react-query'
 import { routeMap } from '/routeMap'
-import { GridCell, GridCellWithLeftPadding, GridRow, GridTable } from '/features/Grid'
+import { GridCell, GridCellWithLeftPadding, GridColumn, GridRow, GridTable, GridTableColumns } from '/features/Grid'
 import { apiCall, apiUrls } from '/api'
 import { DialogModal } from '/features/Dialog'
 import { Button } from '/features/Button'
@@ -24,28 +24,34 @@ export function IndexOverview() {
   return (
     <Page>
       <DialogModal {...{ index, modalRef }} />
-      <GridTable>
-        <GridRow className={styles.gridRow}>
-          <GridCellWithLeftPadding layoutClassName={styles.indexCellLayout}>Index name</GridCellWithLeftPadding>
-          <GridCellWithLeftPadding layoutClassName={styles.docCountCellLayout}>Doc count</GridCellWithLeftPadding>
-          <GridCellWithLeftPadding layoutClassName={styles.mappingButtonCellLayout}>Mapping</GridCellWithLeftPadding>
-        </GridRow>
-        {
-          indices.map(({ index, ['docs.count']: count }) => (
-            <GridRow key={index}>
-              <GridCellWithLeftPadding className={styles.gridCell} layoutClassName={styles.indexCellLayout}>
-                <Link to={routeMap.index.documents({ index })}>{index}</Link>
-              </GridCellWithLeftPadding>
-              <GridCellWithLeftPadding className={styles.gridCell} layoutClassName={styles.docCountCellLayout}>{String(count).padStart(maxCount, '0')}</GridCellWithLeftPadding>
-              <GridCell className={styles.gridCell} layoutClassName={styles.mappingButtonCellLayout}>
-                <Button onClick={() => handleClick(index)}>
-                  Show mapping
-                </Button>
-              </GridCell>
-            </GridRow>
-          ))
-        }
-      </GridTable>
+      <GridTableColumns>
+        <GridColumn layoutClassName={styles.mappingButtonCellLayout}>
+          <GridCell className={styles.headerGridCell}>Mapping</GridCell>
+          {indices.map(({ index }) => (
+            <GridCell>
+              <Button onClick={() => handleClick(index)}>
+                Show mapping
+              </Button>
+            </GridCell>
+          ))}
+        </GridColumn>
+        <GridColumn layoutClassName={styles.indexCellLayout}>
+          <GridCell className={styles.headerGridCell}>Index name</GridCell>
+          {indices.map(({ index }) => (
+            <GridCell className={styles.gridCell}>
+              <Link to={routeMap.index.documents({ index })}>{index}</Link>
+            </GridCell>
+          ))}
+        </GridColumn>
+        <GridColumn layoutClassName={styles.docCountCellLayout}>
+          <GridCell className={styles.headerGridCell}>Doc count</GridCell>
+          {indices.map(({ ['docs.count']: count }) => (
+            <GridCell className={styles.gridCell}>
+              {String(count).padStart(maxCount, '0')}
+            </GridCell>
+          ))}
+        </GridColumn>
+      </GridTableColumns>
     </Page>
   )
 
