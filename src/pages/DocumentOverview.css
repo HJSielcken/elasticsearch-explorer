@@ -4,12 +4,10 @@
 
 .documentGridLayout {
   display: flex;
-
 }
 
 .documentColumnLayout {
-  padding-right: 20px;
-  padding-left: 20px;
+  flex-grow: 1;
 }
 
 .headerGridCell {
@@ -76,105 +74,4 @@
     text-align: center;
     width: 100%;
   }
-
 }
-
-
-/* .firstGridCellLayout {
-  flex: 0 0 100px;
-}
-
-.gridHeader {
-  background-color: teal;
-  border-bottom: 1px solid black;
-  border-top: 1px solid black;
-}
-
-.buttonLayout {
-  display: block;
-  width: 100%;
-}
-
-button.gridButton {
-  background-color:rgb(93, 201, 201); 
-  padding: 4px;
-  border-bottom: 1px black solid;
-  border-right: 0px;
-  border-top: 0px;
-}
-
-.columnSelectWrapperLayout {
-  padding-left: 2px;
-  padding-bottom: 2px;
-  width: 200px;
-}
-
-.buttonsLayout {
-  display: flex;
-  flex-direction: row;
-  gap: 2px;
-  padding-top: 0px;
-}
-
-.buttonRowLayout {
-  position: relative;
-  display: flex;
-  justify-content: space-between;
-  width: 100vw;
-  flex-direction: row;
-  gap: 2px;
-  padding-left: 2px;
-  padding-right: 2px;
-  padding-bottom: 2px;
-  padding-top: 0px;
-}
-
-.cellLayout {
-  display: flex;
-  align-items: center;
-}
-
-.filterFieldLayout {
-  display: grid;
-  grid-template-columns: 150px 200px 40px;
-  padding-left: 100px;
-  gap: 2px;
-}
-
-.filterFormLayout {
-  padding-top: 2px;
-  padding-bottom: 0px;
-  width: 1000px;
-}
-
-.filterHeaderLayout {
-  display: flex;
-  gap: 2px;
-  align-items: center;
-  
-
-  &>* {
-    padding-right: 10px;
-    padding-left: 10px;
-    &:first-child {
-      min-width: 90px;
-    }
-  }
-
-  &>span {
-    padding-left: 4px;
-    text-align: left;
-  }
-
-}
-
-.filterFieldsLayout {
-  padding-bottom: 2px;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-
-  &>:first-child {
-    padding-top: 2px;
-  }
-} */

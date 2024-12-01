@@ -79,7 +79,7 @@ function DocumentTable({ documents, columns }) {
         }
       </GridColumn>
       {columns.map(column => (
-        <GridColumn key={column}>
+        <GridColumn key={column}  layoutClassName={styles.documentColumnLayout}>
           <GridCell className={styles.headerGridCell}>
             {column}
           </GridCell>
