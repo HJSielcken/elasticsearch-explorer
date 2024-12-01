@@ -16,7 +16,6 @@
     "serve.dev": "PORT=8000 CONFIG_ENV=dev yarn serve"
   },
   "dependencies": {
-    "@elastic/elasticsearch": "7",
     "@kaliber/elasticsearch": "^2.1.2",
     "@kaliber/esbuild": "../kaliber-esbuild",
     "@kaliber/forms": "^2.1.2",
@@ -25,7 +24,6 @@
     "@kaliber/use-render-on-mount": "^1.0.4",
     "@tanstack/react-query": "^5.61.0",
     "classnames": "^2.5.1",
-    "history": "^5.3.0",
     "hoist-non-react-statics": "^3.3.2",
     "import-fresh": "^3.3.0",
     "npm-run-all": "^4.1.5",
