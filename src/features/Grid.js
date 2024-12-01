@@ -8,6 +8,14 @@ export function  GridTable({ children, className = undefined, layoutClassName = 
   )
 }
 
+export function  GridTableColumns({ children, className = undefined, layoutClassName = undefined }) {
+  return (
+    <div className={cx(styles.gridTableLayout, styles.gridTableColumnLayout, layoutClassName, className)}>
+      {children}
+    </div>
+  )
+}
+
 export function  GridRow({ children, className = undefined, layoutClassName = undefined }) {
   return (
     <div className={cx(styles.gridRowLayout, className, layoutClassName, )}>

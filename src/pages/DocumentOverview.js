@@ -5,7 +5,7 @@ import { useLocationMatch } from '@kaliber/routing'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { apiCall, apiUrls } from '/api'
 
-import { GridCell, GridColumn, GridTable } from '/features/Grid'
+import { GridCell, GridColumn, GridTableColumns } from '/features/Grid'
 import { MultiSelect } from './FormFields'
 import { DocumentModal, useMapping } from '/features/Dialog'
 import { FormFieldValue } from '@kaliber/forms/components'
@@ -63,7 +63,7 @@ function DocumentTable({ documents, columns }) {
   const { index } = params
 
   return (
-    <GridTable layoutClassName={styles.documentGridLayout}>
+    <GridTableColumns layoutClassName={styles.documentGridLayout}>
       <DocumentModal {...{ index, documentId, modalRef }} />
       <GridColumn layoutClassName={styles.idCellLayout}>
         <GridCell className={styles.headerGridCell}>
@@ -88,7 +88,7 @@ function DocumentTable({ documents, columns }) {
           }
         </GridColumn>
       ))}
-    </GridTable>
+    </GridTableColumns>
   )
 
   function handleDocumentClick(document) {

@@ -2,7 +2,13 @@
   width: 100%;
   overflow-x: scroll;
 
+  &.gridTableColumnLayout {
+    display: flex;
+  }
+
   &>.gridColumnLayout {
+    flex-grow: 1;
+
     display: flex;
     flex-direction: column;
 
@@ -11,7 +17,7 @@
       white-space: nowrap;
       display: flex;
       align-items: center;
-      height: 20px;
+      height: 24px;
 
       &.withLeftPadding {
         padding-left: 4px;
