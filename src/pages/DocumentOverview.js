@@ -1,9 +1,9 @@
 import { array, useArrayFormField, useForm, useFormField, useObjectFormField } from '@kaliber/forms'
 import { matchAll, and, or, not, search, terms } from '@kaliber/elasticsearch/query'
 import { optional, required } from '@kaliber/forms/validation'
-import { useLocationMatch } from '@kaliber/routing'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { apiCall, apiUrls } from '/api'
+import { useHashLocationMatch } from '/machinery/useHashLocationMatch'
 
 import { GridCell, GridColumn, GridTableColumns } from '/features/Grid'
 import { MultiSelect } from './FormFields'
@@ -16,7 +16,10 @@ import styles from './DocumentOverview.css'
 
 export function DocumentOverview() {
   const [query, setQuery] = React.useState(matchAll())
-  const { params: { index } } = useLocationMatch()
+  const { params } = useHashLocationMatch()
+  
+  //@ts-ignore
+  const { index } =params
   const fields = useFilterFields(index)
 
   const { data } = useQuery({
@@ -59,7 +62,9 @@ export function DocumentOverview() {
 function DocumentTable({ documents, columns }) {
   const modalRef = React.useRef(null)
   const [documentId, setDocumentId] = React.useState(null)
-  const { params } = useLocationMatch()
+  const { params } = useHashLocationMatch()
+
+  //@ts-ignore
   const { index } = params
 
   return (

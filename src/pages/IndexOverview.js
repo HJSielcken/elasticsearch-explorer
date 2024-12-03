@@ -8,6 +8,7 @@ import { Button } from '/features/Button'
 import { Page } from './Page'
 
 import styles from './IndexOverview.css'
+import { toHashLink } from '/machinery/normalizeLink'
 
 export function IndexOverview() {
   const modalRef = React.useRef(null)
@@ -38,8 +39,8 @@ export function IndexOverview() {
         <GridColumn layoutClassName={styles.indexCellLayout}>
           <GridCell className={styles.headerGridCell}>Index name</GridCell>
           {indices.map(({ index }) => (
-            <GridCell  key={index} className={styles.gridCell}>
-              <Link to={routeMap.app.index.documents({ index })}>{index}</Link>
+            <GridCell key={index} className={styles.gridCell}>
+              <Link to={toHashLink(routeMap.app.index.documents({ index }))}>{index}</Link>
             </GridCell>
           ))}
         </GridColumn>
