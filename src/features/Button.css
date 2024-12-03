@@ -1,6 +1,6 @@
 .component {
   background-color:rgb(93, 201, 201); 
-  padding: 4px;
+  padding: 3px;
   
   &.withBorder {
     border: 1px black solid;

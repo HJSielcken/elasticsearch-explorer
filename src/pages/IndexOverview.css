@@ -11,13 +11,13 @@
 }
 
 .mappingButtonCellLayout {
-  flex: 0 0 150px;
+  flex: 0 0 120px;
 }
 
 .indexCellLayout {
-  flex: 0 0 800px;
+  flex: 0 1 800px;
 }
 
 .docCountCellLayout {
-  flex-grow: 1;
+  flex: 1 1 auto;
 }
