@@ -1,6 +1,6 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { routeMap } from './routeMap'
-import { LocationProvider, useLocation, useLocationMatch, useRouting } from '@kaliber/routing'
+import { LocationProvider, useLocation, useLocationMatch, usePick, useRouting } from '@kaliber/routing'
 import { useRenderOnMount } from '@kaliber/use-render-on-mount'
 
 import { DocumentOverview } from './pages/DocumentOverview'
@@ -26,10 +26,12 @@ export default function App() {
 
 function Site() {
   const { matchRoutes } = useRouting()
-  const location = useLocation()
+  const pick = usePick()
+  pick()
 
   return (
     matchRoutes(
+      [routeMap.home, <IndexOverview />],
       [routeMap.app, <IndexOverview />],
       [routeMap.app.index, <IndexOverview />],
       [routeMap.app.index.documents, <DocumentOverview />],

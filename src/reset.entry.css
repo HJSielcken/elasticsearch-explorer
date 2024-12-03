@@ -37,19 +37,6 @@ input[type=text] {
   border: 1px black solid;
 }
 
-/* button {
-  background-color:rgb(93, 201, 201); 
-  padding: 4px;
-  border: 1px black solid;
-}
-
-button:hover {
-  background-color:rgb(0, 155, 155); 
-} */
-
-/* select::-ms-expand {
-  display: none;
-} */
 
 a:hover {
   text-decoration: underline;

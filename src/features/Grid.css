@@ -1,42 +1,21 @@
 .gridTableLayout {
-  width: 100%;
-  overflow-x: scroll;
+  /* overflow-x: scroll; */
+  /* overflow-x: hidden; */
 
   &.gridTableColumnLayout {
     display: flex;
   }
 
   &>.gridColumnLayout {
-    /* flex-grow: 1; */
-
     display: flex;
     flex-direction: column;
+    overflow-x: hidden;
 
     >.gridCellLayout {
-      overflow: hidden;
       white-space: nowrap;
       display: flex;
       align-items: center;
       height: 24px;
-
-      &.withLeftPadding {
-        padding-left: 4px;
-      }
-
-    }
-  }
-
-  .gridRowLayout {
-    width: 100%;
-    display: flex;
-    flex-wrap: nowrap;
-    height: auto;
-
-    >.gridCellLayout {
-      overflow: hidden;
-      white-space: nowrap;
-      display: flex;
-      align-items: center;
 
       &.withLeftPadding {
         padding-left: 4px;

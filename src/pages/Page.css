@@ -1,6 +1,7 @@
 .componentLayout {
-  width: 100vw;
-  height: 100vw;
+  display: inline-block;
+  min-width: 100vw;  
+  min-height: 100vh;
 }
 
 .component {
@@ -8,6 +9,7 @@
 }
 
 .componentHeaderLayout {
+  min-height: max-content;
   padding: 5px;
   display: flex;
   flex-direction: row;

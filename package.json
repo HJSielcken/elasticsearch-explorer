@@ -5,13 +5,13 @@
   "license": "MIT",
   "scripts": {
     "start": "CONFIG_ENV=dev PORT=8000 npm-run-all --parallel watch serve",
-    "build": "NODE_ENV=production kaliber-esbuild",
+    "build": "NODE_ENV=production CONFIG_ENV=dev node ./build.js",
     "password": "echo $(op item get 'Firefox Extension Signing' --fields label=username)", 
     "build-firefox": "NODE_ENV=production CONFIG_ENV=dev BROWSER=firefox node ./build.js && yarn web-ext build --source-dir ./target/",
     "sign-firefox": "NODE_ENV=production CONFIG_ENV=dev BROWSER=firefox node ./build.js && web-ext sign  --source-dir ./target/ --channel=unlisted --api-key=$(op item get 'Firefox Extension Signing' --fields label=username) --api-secret=$(op item get 'Firefox Extension Signing' --fields label=password --reveal)",
     "build-chrome": "NODE_ENV=production CONFIG_ENV=dev BROWSER=chrome node ./build.js && op item get \"Chrome Extension Key\" --fields label=text | tr -d '\"' > key.pem && chromium --pack-extension=./target --pack-extension-key=key.pem && rm key.pem",
-    "watch": "kaliber-eswatch",
-    "serve": "kaliber-esserve",
+    "watch": "node ./watch.js",
+    "serve": "node ./serve.js",
     "serve.dev": "PORT=8000 CONFIG_ENV=dev yarn serve"
   },
   "dependencies": {
