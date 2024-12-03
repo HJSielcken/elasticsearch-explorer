@@ -16,8 +16,7 @@ export function Page({ children, layoutClassName = undefined }) {
 function SiteHeader() {
   return (
     <div className={cx(styles.componentHeaderLayout, styles.componentHeader)}>
-      <Link to={routeMap.home()}>Home</Link>
-      <Link to={routeMap.index.overview()}>Overview</Link>
+      <Link to={routeMap.app.index.overview()}>Overview</Link>
     </div>
   )
 }

@@ -30,10 +30,9 @@ function Site() {
 
   return (
     matchRoutes(
-      [routeMap.home, <IndexOverview />],
-      [routeMap.home2, <IndexOverview />],
-      [routeMap.index.overview, <IndexOverview />],
-      [routeMap.index.documents, <DocumentOverview />],
+      [routeMap.app, <IndexOverview />],
+      [routeMap.app.index, <IndexOverview />],
+      [routeMap.app.index.documents, <DocumentOverview />],
     )
   )
 }

@@ -39,7 +39,7 @@ export function IndexOverview() {
           <GridCell className={styles.headerGridCell}>Index name</GridCell>
           {indices.map(({ index }) => (
             <GridCell  key={index} className={styles.gridCell}>
-              <Link to={routeMap.index.documents({ index })}>{index}</Link>
+              <Link to={routeMap.app.index.documents({ index })}>{index}</Link>
             </GridCell>
           ))}
         </GridColumn>
