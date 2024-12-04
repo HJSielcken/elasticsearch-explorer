@@ -4,30 +4,23 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "start": "CONFIG_ENV=dev PORT=8000 npm-run-all --parallel watch serve",
-    "build": "NODE_ENV=production CONFIG_ENV=dev node ./build.js",
-    "password": "echo $(op item get 'Firefox Extension Signing' --fields label=username)", 
-    "build-firefox": "NODE_ENV=production CONFIG_ENV=dev BROWSER=firefox node ./build.js && yarn web-ext build --source-dir ./target/",
-    "sign-firefox": "NODE_ENV=production CONFIG_ENV=dev BROWSER=firefox node ./build.js && web-ext sign  --source-dir ./target/ --channel=unlisted --api-key=$(op item get 'Firefox Extension Signing' --fields label=username) --api-secret=$(op item get 'Firefox Extension Signing' --fields label=password --reveal)",
-    "build-chrome": "NODE_ENV=production CONFIG_ENV=dev BROWSER=chrome node ./build.js && op item get \"Chrome Extension Key\" --fields label=text | tr -d '\"' > key.pem && chromium --pack-extension=./target --pack-extension-key=key.pem && rm key.pem",
-    "watch": "node ./watch.js",
-    "serve": "node ./serve.js",
-    "serve.dev": "PORT=8000 CONFIG_ENV=dev yarn serve"
+    "password": "echo $(op item get 'Firefox Extension Signing' --fields label=username)",
+    "build-firefox": "NODE_ENV=production CONFIG_ENV=dev BROWSER=firefox sielcken-build && yarn web-ext build --source-dir ./target/",
+    "sign-firefox": "NODE_ENV=production CONFIG_ENV=dev BROWSER=firefox sielcken-build && web-ext sign  --source-dir ./target/ --channel=unlisted --api-key=$(op item get 'Firefox Extension Signing' --fields label=username) --api-secret=$(op item get 'Firefox Extension Signing' --fields label=password --reveal)",
+    "build-chrome": "NODE_ENV=production CONFIG_ENV=dev BROWSER=chrome sielcken-build && op item get \"Chrome Extension Key\" --fields label=text | tr -d '\"' > key.pem && chromium --pack-extension=./target --pack-extension-key=key.pem && rm key.pem",
+    "build": "NODE_ENV=production CONFIG_ENV=dev sielcken-build",
+    "build.dev": "CONFIG_ENV=dev sielcken-build",
+    "watch": "CONFIG_ENV=dev sielcken-watch",
+    "serve": "CONFIG_ENV=dev PORT=8000 sielcken-serve",
+    "start": "run-p watch serve"
   },
   "dependencies": {
     "@kaliber/elasticsearch": "^2.1.2",
-    "@kaliber/esbuild": "../kaliber-esbuild",
     "@kaliber/forms": "^2.1.2",
     "@kaliber/routing": "^2.0.0",
-    "@kaliber/safe-json-stringify": "^2.0.1",
     "@kaliber/use-render-on-mount": "^1.0.4",
-    "@tanstack/react-query": "^5.61.0",
-    "classnames": "^2.5.1",
-    "hoist-non-react-statics": "^3.3.2",
-    "import-fresh": "^3.3.0",
-    "npm-run-all": "^4.1.5",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "@sielcken/esbuild": "^0.0.4",
+    "@tanstack/react-query": "^5.61.0"
   },
   "devDependencies": {
     "web-ext": "^8.3.0"

@@ -1,6 +1,6 @@
 module.exports = {
-  kaliber: {
-    compileWithBabel: [
+  harmen: {
+    compileForServer: [
       /@kaliber\/routing/,
       /@kaliber\/use-render-on-mount/,
       /@kaliber\/forms/

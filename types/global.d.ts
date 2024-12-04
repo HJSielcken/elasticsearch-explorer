@@ -2,7 +2,6 @@ interface Window {
   dataLayer: Array<Object>
 }
 
-
 declare module '*.po'
 declare module '*.css'
 
@@ -13,12 +12,12 @@ declare module '*.jpeg'
 declare module '*.png'
 declare module '*?universal'
 
-declare module '@kaliber/esbuild/javascript' {
+declare module '@sielcken/esbuild/javascript' {
   const javascript
   export { javascript }
 }
 
-declare module '@kaliber/esbuild/stylesheet' {
+declare module '@sielcken/esbuild/stylesheet' {
   const stylesheet
   export { stylesheet }
 }

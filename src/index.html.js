@@ -1,5 +1,5 @@
-import { stylesheet } from '@kaliber/esbuild/stylesheet'
-import { javascript } from '@kaliber/esbuild/javascript'
+import { stylesheet } from '@sielcken/esbuild/stylesheet'
+import { javascript } from '@sielcken/esbuild/javascript'
 
 import App from './App?universal'
 

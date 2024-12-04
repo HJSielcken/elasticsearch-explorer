@@ -5,7 +5,9 @@
   "include": [
     "./src/**/*",
     "./types/**/*",
-    "./node_modules/@kaliber/**/*"
+    "./node_modules/@kaliber/**/*",
+    "./node_modules/@sielcken/**/*",
+
   ],
   "compilerOptions": {
     "allowJs": true,
