@@ -17,19 +17,19 @@ import styles from './DocumentOverview.css'
 export function DocumentOverview() {
   const [query, setQuery] = React.useState(matchAll())
   const { params } = useHashLocationMatch()
-  
-  //@ts-ignore
-  const { index } =params
-  const fields = useFilterFields(index)
 
-  const { data } = useQuery({
+  //@ts-ignore
+  const { index } = params
+  const filters = useFilters(index)
+
+  const { data, isFetching } = useQuery({
     queryKey: [index, 'documents', JSON.stringify(query)],
     queryFn: () => getDocuments({ index, query }),
     initialData: { documents: [], total: 0 }
   })
 
   const normalizedDocuments = React.useMemo(
-    () => data.documents.map(fields.extractFieldsFromDocument)
+    () => data.documents.map(filters.extractFieldsFromDocument)
     , [data]
   )
 
@@ -38,16 +38,17 @@ export function DocumentOverview() {
       columnsToShow: optional
     },
     initialValues: {
-      columnsToShow: fields.all
+      columnsToShow: filters.all
     },
     onSubmit: () => { }
   })
 
   return (
     <Page>
-      <FilterForm {...{ index }} onFilterChange={handleFilterChange} columnToShowField={form.fields.columnsToShow} columns={fields.all} {...{ fields }} />
+      {/* {isFetching && <b>Loading</b>} //TODO */}
+      <FilterForm {...{ index }} onFilterChange={handleFilterChange} columnToShowField={form.fields.columnsToShow} columns={filters.all} {...{ filters }} />
       <FormFieldValue field={form.fields.columnsToShow} render={value => {
-        const columns = fields.all.filter(x => value.includes(x))
+        const columns = filters.all.filter(x => value.includes(x))
         return <DocumentTable documents={normalizedDocuments} {...{ columns }} />
       }
       } />
@@ -102,7 +103,7 @@ function DocumentTable({ documents, columns }) {
   }
 }
 
-function FilterForm({ columnToShowField, index, columns, onFilterChange, fields }) {
+function FilterForm({ columnToShowField, index, columns, onFilterChange, filters }) {
   const queryClient = useQueryClient()
   const { form, submit, reset } = useForm({
     fields: {
@@ -124,9 +125,9 @@ function FilterForm({ columnToShowField, index, columns, onFilterChange, fields 
   return (
     <div className={styles.componentFilterFormLayout}>
       <form onSubmit={submit}>
-        <FilterField field={form.fields.and} title='AND' {...{ fields }} />
-        <FilterField field={form.fields.or} title='OR' {...{ fields }} />
-        <FilterField field={form.fields.not} title='NOT' {...{ fields }} />
+        <FilterField field={form.fields.and} title='AND' {...{ filters }} />
+        <FilterField field={form.fields.or} title='OR' {...{ filters }} />
+        <FilterField field={form.fields.not} title='NOT' {...{ filters }} />
         <div className={styles.buttonRowLayout}>
           <div className={styles.formButtonsLayout}>
             <Button className={styles.buttonLayout} onClick={submit}>Search</Button>
@@ -162,9 +163,9 @@ function filterField() {
   })
 }
 
-function FilterField({ field, fields, title }) {
+function FilterField({ field, filters, title }) {
   const { state: { children }, helpers } = useArrayFormField(field)
-  const { keyword, text, optionsPerKeyword } = fields
+  const { keyword, text, optionsPerKeyword } = filters
 
   return (
     <div className={styles.componentfilterFieldLayout}>
@@ -182,11 +183,6 @@ function FilterField({ field, fields, title }) {
       </div>
     </div>
   )
-
-  function preventEnter(e) {
-    console.log(e)
-    e.preventDefault()
-  }
 }
 
 function TextFilterField({ field, textFields, helpers }) {
@@ -245,7 +241,7 @@ function KeywordFilterField({ field, keywordFields, helpers, optionsPerKeyword }
   }
 }
 
-function useFilterFields(index) {
+function useFilters(index) {
   const { mapping } = useMapping({ index })
   const keyword = React.useMemo(() => extractFieldsWithType(mapping, 'keyword'), [mapping])
   const text = React.useMemo(() => extractFieldsWithType(mapping, 'text'), [mapping])
@@ -272,13 +268,13 @@ async function getAggregations({ keyword, index }) {
   const aggs = Object.fromEntries(keyword.map(x => [x, termsAgg(x)]))
   const body = { aggs, size: 0 }
 
-  const response = await apiCall(apiUrls.search({ index }), { method: 'POST', body })
+  const response = await apiCall(apiUrls.index.search({ index }), { method: 'POST', body })
 
   return mapValues(response.aggregations, v => v.buckets.map(x => x.key))
 }
 
 async function getDocuments({ index, query }) {
-  const response = await apiCall(apiUrls.search({ index }), {
+  const response = await apiCall(apiUrls.index.search({ index }), {
     method: 'POST',
     body: {
       from: 0,

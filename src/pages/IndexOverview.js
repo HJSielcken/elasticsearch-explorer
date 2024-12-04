@@ -1,9 +1,9 @@
 import { Link } from '@kaliber/routing'
 import { useQuery } from '@tanstack/react-query'
 import { routeMap } from '/routeMap'
-import { GridCell, GridCellWithLeftPadding, GridColumn, GridRow, GridTable, GridTableColumns } from '/features/Grid'
+import { GridCell, GridColumn, GridTableColumns } from '/features/Grid'
 import { apiCall, apiUrls } from '/api'
-import { DialogModal } from '/features/Dialog'
+import { MappingModal } from '/features/Dialog'
 import { Button } from '/features/Button'
 import { Page } from './Page'
 
@@ -14,7 +14,7 @@ export function IndexOverview() {
   const modalRef = React.useRef(null)
   const [index, setIndex] = React.useState(null)
 
-  const { data: indices } = useQuery({
+  const { data: indices, isFetching } = useQuery({
     queryKey: ['indices'],
     queryFn: () => getIndices(),
     initialData: []
@@ -24,7 +24,8 @@ export function IndexOverview() {
 
   return (
     <Page>
-      <DialogModal {...{ index, modalRef }} />
+      {/* {isFetching && <b>Loading</b>} //TODO */}
+      <MappingModal {...{ index, modalRef }} />
       <GridTableColumns>
         <GridColumn layoutClassName={styles.mappingButtonCellLayout}>
           <GridCell className={styles.headerGridCell}>Mapping</GridCell>

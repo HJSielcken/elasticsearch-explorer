@@ -1,11 +1,17 @@
 export const apiUrls = {
-  mapping: ({ index }) => `http://localhost:9200/${index}`,
   indices: () => 'http://localhost:9200/_cat/indices',
-  search: ({ index }) => `http://localhost:9200/${index}/_search`,
-  document: ({ index, id }) => `http://localhost:9200/${index}/_doc/${id}`,
-  update: ({ index, id }) => `http://localhost:9200/${index}/_update/${id}`,
-  delete: ({ index, id }) => `http://localhost:9200/${index}/_doc/${id}`,
-  create: ({ index, id }) => `http://localhost:9200/${index}/_doc/${id}`,
+  document: {
+    get: ({ index, id }) => `http://localhost:9200/${index}/_doc/${id}`,
+    update: ({ index, id }) => `http://localhost:9200/${index}/_update/${id}`,
+    delete: ({ index, id }) => `http://localhost:9200/${index}/_doc/${id}`,
+    create: ({ index, id }) => `http://localhost:9200/${index}/_doc/${id}`,
+  },
+  index: {
+    mapping: ({ index }) => `http://localhost:9200/${index}`,
+    search: ({ index }) => `http://localhost:9200/${index}/_search`,
+    deleteByQuery: ({ index }) => `http://localhost:9200/${index}/_delete_by_query`,
+    delete: ({ index }) => `http://localhost:9200/${index}/`,
+  }
 }
 
 export async function apiCall(url, { method = 'GET', body = undefined } = {}) {
@@ -17,14 +23,4 @@ export async function apiCall(url, { method = 'GET', body = undefined } = {}) {
       'Content-Type': 'application/json',
     }
   }).then(x => x.json())
-}
-
-export function sendMessage() {
-  console.log(chrome)
-
-  chrome.runtime.sendMessage({ action: 'getData', data: 'example' },
-    function (response) {
-      console.log('Response from background script:', response);
-    }
-  )
 }

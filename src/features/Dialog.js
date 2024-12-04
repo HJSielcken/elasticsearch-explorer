@@ -1,14 +1,23 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { apiCall, apiUrls } from '/api'
+import { matchAll } from '@kaliber/elasticsearch/query'
 import { Button } from './Button'
 
 import styles from './Dialog.css'
 
-export function DialogModal({ index, modalRef }) {
+export function MappingModal({ index, modalRef }) {
   const { mapping } = useMapping({ index })
 
+  const actions = useIndexActions({ index, modalRef })
+  useRefetchOnClose({modalRef, queryKey: ['indices']})
+
+  const buttons = [
+    <Button key='Clear' onClick={() => actions.emptyIndex()}>Clear index</Button>,
+    <Button key='Delete' onClick={() => actions.deleteIndex()}>Delete index</Button>,
+  ]
+
   return (
-    <DialogBase title={index} {...{ modalRef }}>
+    <DialogBase title={index} {...{ modalRef, buttons }}>
       <FormattedJson data={mapping} />
     </DialogBase>
   )
@@ -18,8 +27,9 @@ export function DocumentModal({ index, documentId, modalRef }) {
   const contentRef = React.useRef(null)
   const title = `${index} - ${documentId}`
 
-  useRefetchOnClose({ modalRef, index, documentId })
   const { document, actions } = useDocumentActions({ index, documentId, modalRef })
+  useRefetchOnClose({modalRef, queryKey: [index]})
+
 
   const buttons = [
     <Button key='update' onClick={() => actions.update.mutate(contentRef.current.textContent)}>Update document</Button>,
@@ -73,17 +83,17 @@ function FormattedJsonEdittable({ data, contentRef }) {
 
 async function updateDocument({ index, documentId, textContent }) {
   const body = { doc: JSON.parse(textContent) }
-  await apiCall(apiUrls.update({ index, id: documentId }), { method: 'POST', body })
+  await apiCall(apiUrls.document.update({ index, id: documentId }), { method: 'POST', body })
 }
 
 async function deleteDocument({ index, documentId }) {
-  await apiCall(apiUrls.delete({ index, id: documentId }), { method: 'DELETE' })
+  await apiCall(apiUrls.document.delete({ index, id: documentId }), { method: 'DELETE' })
   return [index, 'document', documentId]
 }
 
 async function copyDocument({ index, document }) {
   const documentId = Math.floor(Math.random() * 100000000)
-  await apiCall(apiUrls.delete({ index, id: documentId }), { method: 'PUT', body: document })
+  await apiCall(apiUrls.document.delete({ index, id: documentId }), { method: 'PUT', body: document })
 }
 
 function ButtonBox({ children }) {
@@ -96,7 +106,7 @@ function ButtonBox({ children }) {
 
 async function getDocument({ index, documentId }) {
   if (!documentId) return {}
-  const { _source = {} } = await apiCall(apiUrls.document({ index, id: documentId }))
+  const { _source = {} } = await apiCall(apiUrls.document.get({ index, id: documentId }))
 
   return _source
 }
@@ -114,7 +124,7 @@ export function useMapping({ index }) {
 
 async function getMapping({ index }) {
   if (!index) return {}
-  const response = await apiCall(apiUrls.mapping({ index }))
+  const response = await apiCall(apiUrls.index.mapping({ index }))
   return response[index].mappings
 }
 
@@ -125,34 +135,55 @@ export function useEvent(fn) {
   return React.useCallback((...args) => fnRef.current(...args), [])
 }
 
-function useRefetchOnClose({ modalRef, index, documentId }) {
+function useRefetchOnClose({ modalRef, queryKey }) {
   const queryClient = useQueryClient()
 
-  const onClose = useEvent((index) => {
-    queryClient.invalidateQueries({
-      queryKey: [index],
-      type: 'all',
-      refetchType: 'active'
+  const onClose = useEvent((queryKey) => {
+    queryClient.refetchQueries({
+      queryKey,
     })
   })
 
   React.useEffect(() => {
-    modalRef.current.addEventListener('close', () => onClose(index))
+    modalRef.current.addEventListener('close', () => onClose(queryKey))
 
     return modalRef.current.removeEventListener('close', onClose)
-  }, [index, modalRef.current, documentId]
+  }, [queryKey, modalRef.current, queryKey]
   )
 }
 
-function useDocumentActions({ index, documentId, modalRef }) {
+function useIndexActions({ index, modalRef }) {
   const queryClient = useQueryClient()
 
+  const { mutate: deleteIndex } = useMutation({
+    mutationFn: async () => {
+      await apiCall(apiUrls.index.delete({ index }), { method: 'DELETE' })
+    },
+    onSuccess: () => {
+      modalRef.current.close()
+    }
+  })
+
+  const { mutate: emptyIndex } = useMutation({
+    mutationFn: async () => {
+      await apiCall(apiUrls.index.deleteByQuery({ index }), {
+        body: {
+          query: matchAll()
+        },
+        method: 'POST'
+      })
+    }
+  })
+
+  return { emptyIndex, deleteIndex }
+}
+
+function useDocumentActions({ index, documentId, modalRef }) {
   const { data: document } = useQuery({
     queryKey: [index, 'document', documentId],
     queryFn: () => getDocument({ index, documentId })
   })
 
-  useRefetchOnClose({ modalRef, index, documentId })
 
   const { isPending, mutate: updateDoc } = useMutation({
     mutationFn: (textContent) => updateDocument({ textContent, index, documentId }),
@@ -160,10 +191,7 @@ function useDocumentActions({ index, documentId, modalRef }) {
 
   const { mutate: deleteDoc } = useMutation({
     mutationFn: () => deleteDocument({ index, documentId }),
-    onSuccess: (queryKey) => {
-      queryClient.removeQueries({
-        queryKey
-      })
+    onSuccess: () => {
       modalRef.current.close()
     }
   })
