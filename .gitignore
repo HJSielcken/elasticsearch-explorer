@@ -11,3 +11,5 @@ server-metafile.json
 target.pem
 target.crx
 .css
+web-ext-artifacts/elasticsearch_explorer-0.2.1.zip
+web-ext-artifacts/b13124845be5433c9592-0.2.2.xpi
