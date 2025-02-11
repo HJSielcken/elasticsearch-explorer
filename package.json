@@ -6,8 +6,8 @@
   "scripts": {
     "password": "echo $(op item get 'Firefox Extension Signing' --fields label=username)",
     "build-firefox": "NODE_ENV=production CONFIG_ENV=dev BROWSER=firefox sielcken-build && yarn web-ext build --source-dir ./target/",
-    "sign-firefox": "NODE_ENV=production CONFIG_ENV=dev BROWSER=firefox sielcken-build && web-ext sign  --source-dir ./target/ --channel=unlisted --api-key=$(op item get 'Firefox Extension Signing' --fields label=username) --api-secret=$(op item get 'Firefox Extension Signing' --fields label=password --reveal)",
-    "build-chrome": "NODE_ENV=production CONFIG_ENV=dev BROWSER=chrome sielcken-build && op item get \"Chrome Extension Key\" --fields label=text | tr -d '\"' > key.pem && chromium --pack-extension=./target --pack-extension-key=key.pem && rm key.pem",
+    "sign-firefox": "NODE_ENV=production CONFIG_ENV=dev BROWSER=firefox sielcken-build && web-ext sign  --source-dir ./target/ --channel=unlisted --api-key=$(op item get 'Firefox Extension Signing' --account KWB2ETMIKBG27D7UBA32VLX4LA --fields label=username) --api-secret=$(op item get 'Firefox Extension Signing' --account KWB2ETMIKBG27D7UBA32VLX4LA  --fields label=password --reveal)",
+    "build-chrome": "NODE_ENV=production CONFIG_ENV=dev BROWSER=chrome sielcken-build && op item get \"Chrome Extension Key\" --account KWB2ETMIKBG27D7UBA32VLX4LA  --fields label=text | tr -d '\"' > key.pem && google-chrome --pack-extension=./target --pack-extension-key=key.pem && rm key.pem",
     "build": "NODE_ENV=production CONFIG_ENV=dev sielcken-build",
     "build.dev": "CONFIG_ENV=dev sielcken-build",
     "watch": "CONFIG_ENV=dev sielcken-watch",
