@@ -1,7 +1,7 @@
 export default process.env.BROWSER === 'firefox' ? ({
   "manifest_version": 3,
   "name": "Elasticsearch Explorer",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Elasticsearch Explorer",
   "action": {},
   "browser_specific_settings": {
@@ -20,7 +20,7 @@ export default process.env.BROWSER === 'firefox' ? ({
 }) : ({
   "manifest_version": 3,
   "name": "Elasticsearch Explorer",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Elasticsearch Explorer",
   "action": {},
   "host_permissions": [
