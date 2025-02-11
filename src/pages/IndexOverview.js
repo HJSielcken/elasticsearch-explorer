@@ -7,11 +7,11 @@ import { ButtonBox, MappingModal } from '/features/Dialog'
 import { Button } from '/features/Button'
 import { Page } from './Page'
 import { toHashLink } from '/machinery/normalizeLink'
-
-import styles from './IndexOverview.css'
 import { snapshot, useForm, useFormField } from '@kaliber/forms'
 import { optional } from '@kaliber/forms/validation'
 import { matchAll } from '@kaliber/elasticsearch/query'
+
+import styles from './IndexOverview.css'
 
 export function IndexOverview() {
   const modalRef = React.useRef(null)
@@ -83,9 +83,6 @@ export function IndexOverview() {
         <Button onClick={deleteIndices}>Delete</Button>
         <Button onClick={emptyIndices}>Clear</Button>
       </ButtonBox>
-
-
-
     </Page>
   )
 
