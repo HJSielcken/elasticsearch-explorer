@@ -4,5 +4,4 @@ export function Button({ onClick, children, layoutClassName = undefined, classNa
   return <button className={cx(styles.componentLayout, styles.component, className, layoutClassName)} {...{ onClick }}>
     {children}
   </button>
-
 }

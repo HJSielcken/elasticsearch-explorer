@@ -9,14 +9,12 @@
 }
 
 .componentHeaderLayout {
-  min-height: max-content;
   padding: 5px;
   display: flex;
   flex-direction: row;
-  justify-content: left;
+  justify-content: space-between;
   height: 30px;
   align-items: center;
-  gap: 40px;
 }
 
 .componentHeader {

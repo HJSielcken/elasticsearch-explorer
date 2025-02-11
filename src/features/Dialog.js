@@ -96,7 +96,7 @@ async function copyDocument({ index, document }) {
   await apiCall(apiUrls.document.delete({ index, id: documentId }), { method: 'PUT', body: document })
 }
 
-function ButtonBox({ children }) {
+export function ButtonBox({ children }) {
   return (
     <div className={styles.buttonBoxLayout}>
       {children}
@@ -153,8 +153,6 @@ function useRefetchOnClose({ modalRef, queryKey }) {
 }
 
 function useIndexActions({ index, modalRef }) {
-  const queryClient = useQueryClient()
-
   const { mutate: deleteIndex } = useMutation({
     mutationFn: async () => {
       await apiCall(apiUrls.index.delete({ index }), { method: 'DELETE' })

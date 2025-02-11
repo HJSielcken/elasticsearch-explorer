@@ -32,7 +32,7 @@ export function  GridColumn({ children, className = undefined, layoutClassName =
   )
 }
 
-export function  GridCell({ children, className = undefined, layoutClassName = undefined, }) {
+export function  GridCell({ children = undefined, className = undefined, layoutClassName = undefined, }) {
   return (
     <div className={cx(styles.gridCellLayout, styles.gridCell, layoutClassName, className)}>
       {children}

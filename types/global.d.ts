@@ -2,6 +2,21 @@ interface Window {
   dataLayer: Array<Object>
 }
 
+declare module React {
+  interface CSSProperties {
+    '--index'?: string | number
+    '--aspect-ratio'?: string | number
+    '--offset-submenu'?: string | number
+    '--submenu-background-scaleY'?: string | number
+    '--z-index'?: string | number
+    '--delay'?: string | number
+    '--total-delay'?: string | number
+    '--container-width'?: string | number
+    '--container-height'?: string | number
+    '--min-height-card'?: string | number
+  }
+}
+
 declare module '*.po'
 declare module '*.css'
 

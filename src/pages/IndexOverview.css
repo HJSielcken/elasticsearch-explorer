@@ -10,6 +10,12 @@
   padding-right: 4px;
 }
 
+.mappingCheckboxCellLayout {
+  flex: 0 0 20px;
+  justify-content: center;
+  align-items: center;
+}
+
 .mappingButtonCellLayout {
   flex: 0 0 120px;
 }
@@ -20,4 +26,15 @@
 
 .docCountCellLayout {
   flex: 1 1 auto;
+}
+
+.componentSearchInput {
+  width: 300px;
+  border: 0px;
+  color: #000;
+
+  &>input {
+    width: 100%;
+    background-color: rgb(164, 212, 200);;
+  }
 }
