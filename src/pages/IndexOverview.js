@@ -3,7 +3,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { routeMap } from '/routeMap'
 import { GridCell, GridColumn, GridTableColumns } from '/features/Grid'
 import { apiCall, apiUrls } from '/api'
-import { ButtonBox, MappingModal } from '/features/Dialog'
+import { ButtonBox, MappingModal, useEvent } from '/features/Dialog'
 import { Button } from '/features/Button'
 import { Page } from './Page'
 import { toHashLink } from '/machinery/normalizeLink'
@@ -48,7 +48,7 @@ export function IndexOverview() {
           </GridCell>
           {filteredIndices.map(({ index }) => (
             <GridCell key={index}>
-              <CheckBox field={form.fields.indices} instanceValue={index} />
+              <CheckBox field={form.fields.indices} instanceValue={index} allValues={filteredIndices.map(x => x.index)} />
             </GridCell>
           ))}
         </GridColumn>
@@ -113,7 +113,8 @@ function InputComponent({ searchValue, onSearchChange }) {
   }
 }
 
-function CheckBox({ field, instanceValue }) {
+function CheckBox({ field, instanceValue, allValues }) {
+  const shiftIsDownRef = useShiftIsDownEvent()
   const { state, eventHandlers } = useFormField(field)
   const { value = [] } = state
   const checked = value.includes(instanceValue)
@@ -121,12 +122,20 @@ function CheckBox({ field, instanceValue }) {
   return <input type='checkbox' {...{ checked }} value={instanceValue} onChange={() => handleChange(instanceValue)} />
 
   function handleChange(instanceValue) {
-    const newValue = value.includes(instanceValue)
-      ? value.filter(x => x !== instanceValue)
-      : [...value, instanceValue]
+    if (shiftIsDownRef.current) {
+      const [lastValue] = value.slice(-1)
+      const [minIndex, maxIndex] = [allValues.indexOf(lastValue) + 1, allValues.indexOf(instanceValue) + 1].sort((a, b) => a - b)
+      const newValue = [...value, ...allValues.slice(minIndex, maxIndex)]
+      eventHandlers.onChange(newValue)
+    } else {
+      const newValue = value.includes(instanceValue)
+        ? value.filter(x => x !== instanceValue)
+        : [...value, instanceValue]
 
-    eventHandlers.onChange(newValue)
+      eventHandlers.onChange(newValue)
+    }
   }
+  
 }
 
 function SelectAllButton({ field, indices }) {
@@ -178,4 +187,30 @@ function useIndexActions({ form, reset }) {
   })
 
   return { deleteIndices, emptyIndices }
+}
+
+function useShiftIsDownEvent() {
+  const shiftIsDownRef = React.useRef(false)
+  const shiftDownEventHandler = useEvent((e) => {
+    if (e.shiftKey) shiftIsDownRef.current = true
+  })
+
+  const shiftUpEventHandler = useEvent((e) => {
+    shiftIsDownRef.current = false
+  })
+
+  React.useEffect(
+    () => {
+      window.addEventListener('keydown', shiftDownEventHandler)
+      window.addEventListener('keyup', shiftUpEventHandler)
+
+      return () => {
+        window.removeEventListener('keydown', shiftDownEventHandler)
+        window.removeEventListener('keyup', shiftUpEventHandler)
+      }
+    },
+    []
+  )
+
+  return shiftIsDownRef
 }
